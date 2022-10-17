@@ -4,7 +4,7 @@
 #include <stack>
 #include <utility>
 #include "symbol.h"
-
+#include "token.h"
 
 Lex::Lex(const std::string &regex2token_filepath, const std::string &source_filepath) {
     lex_file = new ifstream(regex2token_filepath);
@@ -51,9 +51,13 @@ Lex::~Lex() {
 void Lex::lexing() {
     // scope stack
     int scope_count = 0;
+    int row_no = 0;
     while (pre_process->hasNextLine()) {
         auto line = pre_process->getNextLine();
+        row_no++;
+        int col_no = 0;
         for (auto &word: line) {
+            col_no++;
             // search cache first
             bool mismatch = true;
             // pair result
@@ -79,6 +83,14 @@ void Lex::lexing() {
                 std::cerr << "mismatch word: " << word << std::endl;
                 exit(1);
             } else {
+                // install to token table
+                Token tok;
+                tok.name = match_res.first;
+                tok.token_name = match_res.second;
+                tok.row = row_no;
+                tok.col = col_no;
+                installToken(tok);
+
                 // install identifier to symbol table
                 if (match_res.second == "IDENTIFIER") {
                     Symbol sym;
@@ -101,4 +113,6 @@ void Lex::lexing() {
     }
     std::cout << std::endl;
     printSymbolTable();
+    std::cout << std::endl;
+    printTokenList();
 }
