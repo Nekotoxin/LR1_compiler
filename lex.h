@@ -13,7 +13,7 @@
 
 class Lex {
 private:
-    std::vector<std::pair<std::string, std::string>> regex2token;
+    std::vector<std::pair<std::string, std::string>> regex2token;   // From regex2token.l
     std::unordered_map<std::string, std::string> match_cache;
     ifstream *source_file;
     ifstream *lex_file;
