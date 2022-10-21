@@ -33,15 +33,23 @@ make
 
 1. 错误处理部分, 完全没做, 把我的错误输出删除(那个只说明了,在dfa的当前状态中, 不希望接受此输入, 没有人会愿意看几百个状态). 错误处理参考gcc和yacc, 需要定位到行列
 
-2. AST部分, 在对源代码进行解析的过程中完成AST树的构建. 这部分完全没做
+2. 进一步完善文法, 请翻到本文件最后查看希望成功解析的源文件
+
+   还需要做以下支持
+
+   1. 现在只支持一个函数, 将来要支持多个函数
+   2. 支持连续比较: <, >, <=等等
+   3. 支持连乘连除
+
+3. AST部分, 在对源代码进行解析的过程中完成AST树的构建. 这部分完全没做
 
    但是这部分的设计也很重要, 类比TokenStream, 这是语法分析阶段交付给后面步骤的输出
 
-3. identifier继续登陆符号表, 词法分析阶段登陆得还不完全
+4. identifier继续登陆符号表, 词法分析阶段登陆得还不完全
 
    ![img](https://img-blog.csdnimg.cn/img_convert/765e08990e400c91e821996783f57ad9.png)
 
-4. 前端部分
+5. 前端部分
 
    **用户可输入部分**: 词法 .sl 文件, 语法 .sy文件, 源文件 .c文件, 直接给输入框
 
@@ -53,7 +61,7 @@ make
 
    
 
-   1. 前端可以用python写, 用python直接从命令行启动tcc, tcc将json文件保存到本次, 然后python读, 可视化
+   1. 前端可以用python写, 用python直接从命令行启动tcc, tcc将json文件保存到本地, 然后python读, 可视化
 
    2. 前端也可以用js写, 结合qt, qt中嵌入一个浏览器视图用来渲染js文件
 
@@ -66,3 +74,43 @@ make
    ![Screen Shot 2022-10-21 at 13.32.56](https://user-images.githubusercontent.com/75596353/197121530-3c5a3dfd-ee26-4670-abda-07e6c9a164eb.png)
 
    ![Screen Shot 2022-10-21 at 13.33.15](https://user-images.githubusercontent.com/75596353/197121548-4d0f2f86-052c-48e5-8cd2-d527f532662b.png)
+
+
+
+文法需要进一步完善, 我们希望最终能够解析如下源文件:
+
+```c
+int a;
+int b;
+int program(int a, int b, int c) {
+    int i;
+    int j;
+    i = 0;
+    if (a > (b + c)) {
+        j = a + (b * c + 1);
+    } else {
+        j = a;
+    }
+    while (j <= 100) {
+        j = j * 2;
+    }
+    return j;
+}
+
+int demo(int a) {
+    a = a + 2;
+    return a * 2;
+}
+
+void main(void) {
+    int a = 1*2/3;
+    float b;
+    int c;
+    a = 3;
+    b = 4;
+    c = 2;
+    a = program(a, b, demo(c));
+    return;
+}
+```
+
