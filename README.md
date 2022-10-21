@@ -7,7 +7,7 @@ git clone https://github.com/Nekotoxin/LR1_compiler
 cd LR1_compiler
 mkdir build
 cd build
-cmake ../src
+cmake ..
 make
 ./tcc -l ../test_files/regex2token.sl -y ../test_files/grammar.sy -s ../test_files/test.c
 ```
