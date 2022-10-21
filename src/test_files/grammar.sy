@@ -2,12 +2,12 @@ start_point
     : Program $
     ;
 Program
-    : 类型 ID ( ) 语句块
+    : 类型 IDENTIFIER ( ) 语句块
     ;
 类型
-    : int
-    | float
-    | void
+    : INT
+    | FLOAT
+    | VOID
     ;
 语句块
     : { 语句串 }
@@ -25,38 +25,26 @@ Program
     | 语句块
     ;
 声明语句
-    : 类型 ID ;
-    | 类型 ID = 表达式 ;
+    : 类型 IDENTIFIER ;
+    | 类型 IDENTIFIER = 表达式 ;
     ;
 赋值语句
-    : ID = 表达式 ;
+    : IDENTIFIER = 表达式 ;
     ;
 return语句
-    : return 表达式 ;
-    | return ;
+    : RETURN 表达式 ;
+    | RETURN ;
     ;
 while语句
-    : while ( 表达式 ) 语句块
+    : WHILE ( 表达式 ) 语句块
     ;
 if语句
-    : if ( 表达式 ) 语句块
-    | if ( 表达式 ) 语句块 else 语句块
-    | if ( 表达式 ) 语句块 else if语句
+    : IF ( 表达式 ) 语句块
+    | IF ( 表达式 ) 语句块 ELSE 语句块
+    | IF ( 表达式 ) 语句块 ELSE if语句
     ;
 表达式
     : 加法表达式
-    | 比较表达式
-    ;
-比较表达式
-    : 加法表达式 比较运算符 加法表达式
-    ;
-比较运算符
-    : <
-    | >
-    | <=
-    | >=
-    | ==
-    | !=
     ;
 加法表达式
     : 项
@@ -69,9 +57,9 @@ if语句
     | 因子 / 因子
     ;
 因子
-    : num
+    : I_CONSTANT
     | ( 表达式 )
-    | ID FTYPE
+    | IDENTIFIER FTYPE
     ;
 FTYPE
     : NULL

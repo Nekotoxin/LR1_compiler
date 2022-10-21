@@ -31,15 +31,16 @@ int count_set_total_size(std::map<std::string, std::set<std::string>> &s) {
     return total_size;
 }
 
-LR1DFA::LR1DFA(const std::vector<Generator>& _generators, const std::set<std::string>& _terminals,
-        const std::set<std::string>& _non_terminals): generators(_generators), terminals(_terminals), non_terminals(_non_terminals) {
+LR1DFA::LR1DFA(const std::vector<Generator> &_generators, const std::set<std::string> &_terminals,
+               const std::set<std::string> &_non_terminals) : generators(_generators), terminals(_terminals),
+                                                              non_terminals(_non_terminals) {
     if (generators.empty()) {
         std::cout << "generators is empty" << std::endl;
         exit(1);
     }
-
     ConstructFirstSetAndFollowSet();
     PrintMemberVars();
+    std::cout<<"\n别急，正在构造LR(1) DFA\n";
     ConstructLR1DFA();
 }
 
@@ -79,7 +80,7 @@ void LR1DFA::GetClosure(std::set<LR1Item> &state_set) {
                 }
             }
             // if X is a non-terminal
-            if(item.dot_pos >= item.generator.second.size()) continue;
+            if (item.dot_pos >= item.generator.second.size()) continue;
             std::string dot_pos_str = item.generator.second[item.dot_pos];
             for (auto &generator: generators) {
                 std::string l_val = generator.first;
@@ -93,8 +94,6 @@ void LR1DFA::GetClosure(std::set<LR1Item> &state_set) {
         }
     } while (closure_size != state_set.size());
 }
-
-
 
 
 void LR1DFA::ConstructFirstSetAndFollowSet() {// construct FIRST and FOLLOW set
@@ -224,7 +223,7 @@ void LR1DFA::PrintMemberVars() {
     }
 }
 
-void LR1DFA::GetGoto(const std::set<LR1Item> &state_set, const std::string& eat, std::set<LR1Item> &goto_set) {
+void LR1DFA::GetGoto(const std::set<LR1Item> &state_set, const std::string &eat, std::set<LR1Item> &goto_set) {
     goto_set.clear();
     time_t start = clock();
     for (auto &item: state_set) {
@@ -239,7 +238,7 @@ void LR1DFA::GetGoto(const std::set<LR1Item> &state_set, const std::string& eat,
     GetClosure(goto_set);
 }
 
-void LR1DFA::ConstructLR1DFA(){
+void LR1DFA::ConstructLR1DFA() {
     start_set = {};
     // find all generators with start symbol
 
@@ -282,15 +281,15 @@ void LR1DFA::ConstructLR1DFA(){
             }
         }
     } while (node_set_size != dfa_node_set.size() || edge_set_size != dfa_edge_set.size());
-    std::cout<<"time_count_1: "<<time_count_1/CLOCKS_PER_SEC<<std::endl;
-    std::cout<<"time_count_2: "<<time_count_2/CLOCKS_PER_SEC<<std::endl;
+    std::cout << "time_count_1: " << time_count_1 / CLOCKS_PER_SEC << std::endl;
+    std::cout << "time_count_2: " << time_count_2 / CLOCKS_PER_SEC << std::endl;
 
     std::cout << "dfa_node_set.size() = " << dfa_node_set.size() << std::endl;
     // set the start state to no.1
     // copy the dfa_node_set to dfa_nodes
     int nodes_size = dfa_node_set.size();
     dfa_nodes = new DFANode[nodes_size];
-    DFANode * p_start;
+    DFANode *p_start;
     int count = 0;
     for (auto &dfa_node: dfa_node_set) {
         dfa_nodes[count] = dfa_node;
@@ -304,8 +303,8 @@ void LR1DFA::ConstructLR1DFA(){
     StateNo state_no = 0;
     dfa_state_map[state_no] = p_start;
     dfa_state_map_reverse[p_start] = state_no;
-    for(int idx=0;idx < nodes_size; idx++) {
-        DFANode* p_cur = &dfa_nodes[idx];
+    for (int idx = 0; idx < nodes_size; idx++) {
+        DFANode *p_cur = &dfa_nodes[idx];
         if (p_cur == p_start) {
             continue;
         }
@@ -313,7 +312,7 @@ void LR1DFA::ConstructLR1DFA(){
         dfa_state_map_reverse[p_cur] = state_no;
     }
 
-    std::cout<<dfa_state_map.size()<<std::endl;
+    std::cout << dfa_state_map.size() << std::endl;
 
     // construct the dfa_transition_map
     for (auto &dfa_edge: dfa_edge_set) {

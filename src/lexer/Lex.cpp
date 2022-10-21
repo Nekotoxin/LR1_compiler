@@ -1,10 +1,10 @@
-#include "lex.h"
+#include "Lex.h"
 #include <regex>
 #include <iostream>
 #include <stack>
 #include <utility>
-#include "symbol.h"
-#include "token.h"
+#include "../common/Symbol.h"
+#include "../common/Token.h"
 
 Lex::Lex(const std::string &regex2token_filepath, const std::string &source_filepath) {
     lex_file = new ifstream(regex2token_filepath);
@@ -48,7 +48,8 @@ Lex::~Lex() {
     delete pre_process;
 }
 
-void Lex::lexing() {
+TokenStream Lex::lexing() {
+    TokenStream token_stream;
     // scope stack
     int scope_count = 0;
     int row_no = 0;
@@ -89,7 +90,7 @@ void Lex::lexing() {
                 tok.token_name = match_res.second;
                 tok.row = row_no;
                 tok.col = col_no;
-                installToken(tok);
+                installToken(token_stream, tok);
 
                 // install identifier to symbol table
                 if (match_res.second == "IDENTIFIER") {
@@ -98,7 +99,8 @@ void Lex::lexing() {
                     sym.hash = std::hash<std::string>{}(word) + (scope_count == 0);
                     sym.binding = (scope_count == 0 ? ID_CLASS::GLOBAL : ID_CLASS::LOCAL);
                     installSymbol(sym);
-                    std::cout << "<\"" << match_res.first << "\", " << match_res.second + "-HASH-" << sym.hash%10000 << ">";
+                    std::cout << "<\"" << match_res.first << "\", " << match_res.second + "-HASH-" << sym.hash % 10000
+                              << ">";
                 } else {
                     std::cout << "<\"" << match_res.first << "\", " << match_res.second << "> ";
                 }
@@ -114,5 +116,6 @@ void Lex::lexing() {
     std::cout << std::endl;
     printSymbolTable();
     std::cout << std::endl;
-    printTokenList();
+    printTokenList(token_stream);
+    return token_stream;
 }

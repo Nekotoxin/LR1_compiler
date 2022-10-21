@@ -10,7 +10,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
-#include "PreProcess.h"
+#include "GrammarPreProcess.h"
 #include "LR1DFA.h"
 
 typedef enum {

@@ -8,52 +8,42 @@
 #include <algorithm>
 #include <time.h>
 #include <stack>
+#include <stdexcept>
 
 
-Parser::Parser(std::string source_code_from_lexer_file, std::string grammar_file) {
-    PreProcess preProcess(source_code_from_lexer_file, grammar_file);
+Parser::Parser(std::string grammar_file) {
+    GrammarPreProcess preProcess(grammar_file);
+    this->generators = preProcess.generators;
+    this->terminals = preProcess.terminals;
+    this->non_terminals = preProcess.non_terminals;
     time_t start = clock();
-    parsingTable = new ParsingTable(preProcess.generators, preProcess.terminals, preProcess.non_terminals);
+    parsingTable = new ParsingTable(this->generators, this->terminals, this->non_terminals);
     time_t end = clock();
     std::cout << "Parsing table generated in " << (double) (end - start) / CLOCKS_PER_SEC << "s" << std::endl;
-    Parse();
 }
 
 Parser::~Parser() {
     delete parsingTable;
 }
 
-void Parser::Parse() {
+AST Parser::Parse(TokenStream &token_stream) {
     time_t start = clock();
     time_t end;
     // 连续比较，文法还不支持
-    std::string input_before = "int ID ( ) { if ( num + num <= ID / num ) { { } int ID = num * num ; } else if ( ID ) { float ID ; } else if ( num ) { int ID ; ID = num ; int ID ; } else { } float ID ; int ID ; ID = num ; ID = num + num ; int ID ; ID = ( num * num + ID - ID / num + ID / ( ID - num ) ) ; while ( num + ID ( num , ID , num + ID ) ) { int ID ; while ( num ) { int ID ; ID = num ; { } } } if ( ID + num * ( ID * num - ID ) ) { int ID ; ID = num ; return ID + num ; } else { return num * ID ; } int ID ; return num ; }";
-    std::vector<std::string> input = {};
-    // 按照空格分割input_before
-    std::string tmp = "";
-    for (auto &ch: input_before) {
-        if (ch == ' ') {
-            input.push_back(tmp);
-            tmp = "";
-        } else {
-            tmp += ch;
-        }
-    }
-    input.push_back(tmp);
-    input.push_back(END_SYMBOL);
     // state stack
+    token_stream.push_back(Token(END_SYMBOL, END_SYMBOL, 0, 0));
     std::stack<StateNo> state_stack;
     // symbol stack
     std::stack<std::string> symbol_stack;
 
-    auto input_idx = 0;
+    auto token_it = token_stream.begin();
     auto state = 0;
     state_stack.push(state);
 //    symbol_stack.push(END_SYMBOL);
     Generator generator;
     int generator_size;
     while (true) {
-        auto symbol = input[input_idx];
+        auto symbol = token_it->token_name;
         Action action;
         StateNo next_state;
         if (parsingTable->action_table.find(std::make_pair(state, symbol)) != parsingTable->action_table.end()) {
@@ -72,7 +62,8 @@ void Parser::Parse() {
             state_stack.push(next_state);
         } else {
             std::cout << "❌ Error: " << symbol << " is not expected at state " << state << std::endl;
-            return;
+            // TODO: 调用错误处理函数
+            return AST();
         }
         // print symbol stack
         std::stack<std::string> tmp_stack;
@@ -88,17 +79,18 @@ void Parser::Parse() {
         }
         std::cout << "  ⬅️  ";
         // print input
-        for (auto i = input_idx; i < input.size(); ++i) {
-            std::cout << input[i] << " ";
+        for (auto it = token_it; it != token_stream.end(); it++) {
+            std::cout << it->token_name << " ";
         }
-        std::cout <<"]"<< std::endl;
+        std::cout << "]" << std::endl;
 
         switch (action) {
             case shift:
-                std::cout << "  ◀️ 预读取符号(lookahead)为： \"" << symbol << "\" ，移进，转到状态 " << next_state << std::endl;
+                std::cout << "  ◀️ 预读取符号(lookahead)为： \"" << symbol << "\" ，移进，转到状态 " << next_state
+                          << std::endl;
                 state_stack.push(next_state);
                 symbol_stack.push(symbol);
-                input_idx++;
+                token_it++;
                 break;
             case reduce:
                 generator = parsingTable->generators[next_state];
@@ -118,8 +110,10 @@ void Parser::Parse() {
                 symbol_stack.push(generator.first);
                 if (parsingTable->goto_table.find(std::make_pair(state, generator.first)) ==
                     parsingTable->goto_table.end()) {
-                    std::cout << "⛔ Error: " << generator.first << " is not expected at state " << state << std::endl;
-                    return;
+                    std::cout << "❌ Error: " << generator.first << " is not expected at state " << state
+                              << std::endl;
+                    // TODO: 调用错误处理函数
+                    return AST();
                 }
                 state_stack.push(parsingTable->goto_table[std::make_pair(state, generator.first)].second);
                 break;
@@ -130,16 +124,20 @@ void Parser::Parse() {
             case accept:
                 std::cout << "✅ Accept" << std::endl;
                 end = clock();
-                std::cout << "Parse部分耗时：" << (double)(end - start) / CLOCKS_PER_SEC << "s" << std::endl;
-                return;
+                std::cout << "Parse部分耗时：" << (double) (end - start) / CLOCKS_PER_SEC << "s" << std::endl;
+                // TODO: 生成AST
+                return AST();
             case error:
-                std::cout << "⛔ Error" << std::endl;
-                return;
+                std::cout << "❌ Error: " << symbol << " is not expected at state " << state << std::endl;
+                // TODO: 调用错误处理函数
+                return AST();
             default:
                 break;
         }
         state = state_stack.top();
     }
+
+
 
 
 }

@@ -8,12 +8,13 @@
 #include <utility>
 #include <string>
 #include <functional>
-#include "global_def.h"
-#include "pre_process.h"
+#include "Symbol.h"
+#include "PreProcess.h"
+#include "Token.h"
 
 class Lex {
 private:
-    std::vector<std::pair<std::string, std::string>> regex2token;   // From regex2token.l
+    std::vector<std::pair<std::string, std::string>> regex2token;   // From regex2token.sl
     std::unordered_map<std::string, std::string> match_cache;
     ifstream *source_file;
     ifstream *lex_file;
@@ -25,7 +26,7 @@ public:
     ~Lex();
 
     // from source file to token stream
-    void lexing();
+    TokenStream lexing();
 
 };
 

@@ -1,4 +1,4 @@
-#include "pre_process.h"
+#include "PreProcess.h"
 #include<iostream>
 
 static void addSpaceToSign(string &str, int index, int sign_width) {
@@ -20,12 +20,12 @@ vector<string> PreProcess::readWordFromStream(istringstream &str_in) {
             } else
                 res.push_back(tmp);
         }
-        //¶Áµ½ "¾Í×ª»¯ÎªgetcÈ¥¶Á
+        //???? "??????getc???
         if (tmp == "\"" || tmp == "'") {
             const char flag = tmp[0];
             string str_to_read;
             int prev = 0, cur = 0;
-            cur = str_in.get();//ÏÈ¶ÁµôÒ»¸ö×Ô¼ºÌí¼Ó¹ýµÄ¿Õ¸ñ
+            cur = str_in.get();//???????????????????
             bool is_found = 0;
             while (!str_in.eof()) {
                 cur = str_in.get();
@@ -37,10 +37,10 @@ vector<string> PreProcess::readWordFromStream(istringstream &str_in) {
                 prev = cur;
             }
             if (is_found) {
-                str_to_read.pop_back();    //È¥³ý¶à¶ÁµÄ¿Õ¸ñ
+                str_to_read.pop_back();    //??????????
                 str_to_read.insert(0, 1, flag);
                 str_to_read.push_back(flag);
-                res.push_back(str_to_read);    //¼ÓÈë×Ö·û´®
+                res.push_back(str_to_read);    //?????????
             }
         }
     }
@@ -50,16 +50,16 @@ vector<string> PreProcess::readWordFromStream(istringstream &str_in) {
 void PreProcess::dealDefineSentence(const string &str) {
     istringstream str_in(str);
     string first_key;
-    str_in >> first_key >> first_key >> first_key;    //¶ÁÈý´ÎÊÇÒòÎªÒªÏÈ¶Áµô # define
+    str_in >> first_key >> first_key >> first_key;    //????????????????? # define
     vector<string> second_key_list = readWordFromStream(str_in);
     marco.insert(pair<string, vector<string>>(first_key, second_key_list));
 }
 
 /*
-±ê×¼¸ñÊ½  "# Ö¸Áî ±äÁ¿ (±äÁ¿£¬¿Éº¬¿Õ¸ñ)"
-Àý×Ó£º# define A 1 << 322;
+??????  "# ??? ???? (????????????)"
+?????# define A 1 << 322;
       # include <iostream>
-ÓÃÍ¾£ºÎªÁË±ãÓÚ×Ö·û´®Á÷Çø·Ö³öÊÇdefine»¹ÊÇincludeÖ¸Áî
+?????????????????????????define????include???
 */
 static string stdPoundSentence(const string &str) {
     string res = str;
@@ -108,18 +108,18 @@ vector<string> PreProcess::getNextLine() {
     in->getline(buffer, sizeof(buffer));
     string str_buffer = buffer;
 
-    bool is_include = 0;        //ÊÇ·ñ¿ªÊ¼¶ÁÈ¡Í·ÎÄ¼þÄÚÈÝ
-    bool is_left_trail = 0;        //ÊÇ·ñÊÇÍ·ÎÄ¼þ×ó±ß
-    bool is_string = 0;            //ÊÇ·ñ¿ªÊ¼¶ÁÈ¡×Ö·û´®
+    bool is_include = 0;        //???????????????
+    bool is_left_trail = 0;        //????????????
+    bool is_string = 0;            //????????????
     bool is_char = 0;
-    bool is_define = 0;            //ÊÇ·ñÊÇºê¶¨Òå
-    static bool is_multi_comment = 0; /*¶àÐÐ×¢ÊÍ·ç¸ñ*/
-    bool is_single_comment = 0;    //µ¥ÐÐµ¥ÐÐ×¢ÊÍ
-    bool is_pound_key = 0; // #±êÖ¾
+    bool is_define = 0;            //????????
+    static bool is_multi_comment = 0; /*?????????*/
+    bool is_single_comment = 0;    //???Ðµ??????
+    bool is_pound_key = 0; // #???
 
 
     for (int k = 0; k < str_buffer.size(); k++) {
-        //ÈôÖ®Ç°ÓÖÎ´½áÊøµÄ¶àÐÐ×¢ÊÍ
+        //??????Î´????????????
         if (is_multi_comment) {
             auto index = str_buffer.find("*/");
             if (index != string::npos) {
@@ -130,10 +130,10 @@ vector<string> PreProcess::getNextLine() {
                 break;
             }
         }
-        //ÏÈ´¦Àí²»ÐèÒª³¬Ç°ËÑË÷µÄ·ûºÅ
+        //????????????????????
         if (str_buffer[k] == ' ')
             continue;
-            //´¦Àí×Ö·û´®,¹æ¶¨±ê×¼×Ö·û´®¸ñÊ½ "+¿Õ¸ñ+ÄÚÈÝ+¿Õ¸ñ+" , ÓÐ×ªÒå·û»òÕßÇ°ÃæÓÐ'ÇÒ²»ÔÚ¶ÁÈ¡×Ö·û´®Ê±£¬²»Ó¦¸ÃÈÏ¶¨ÎªÊÇ×Ö·û´®µÄÆðÊ¼±êÖ¾
+            //?????????,?æ¶¨??????????? "+???+????+???+" , ???????????????'???????????????????????????????????????
         else if (str_buffer[k] == '"') {
             if ((k == 0 || (str_buffer[k - 1] != '\\') && !(str_buffer[k - 1] == '\'' && !is_string)) &&
                 !(is_single_comment || is_multi_comment)) {
@@ -148,44 +148,44 @@ vector<string> PreProcess::getNextLine() {
                 is_char = !is_char;
             }
         }
-            // ´¦Àíµ¥ÐÐ×¢ÊÍ
+            // ?????????
         else if ((str_buffer[k] == '/') && (k + 1 < str_buffer.size()) && (str_buffer[k + 1] == '/') &&
                  !(is_string || is_char) && !(is_include && is_left_trail)) {
             str_buffer.erase((k - 1) >= 0 ? k - 1 : 0);
             is_single_comment = 1;
             break;
         }
-            //´¦Àí¶àÐÐ×¢ÊÍ
+            //??????????
         else if (str_buffer[k] == '/' && k + 1 < str_buffer.size() && str_buffer[k + 1] == '*' &&
                  !(is_string || is_char) && !(is_include && is_left_trail)) {
-            if (!is_multi_comment)    //Ö®Ç°Ã»ÓÐÇ°ÖÃ /*
+            if (!is_multi_comment)    //???????? /*
                 is_multi_comment = 1;
-            if (k + 2 < str_buffer.size()) {    //ÅÐ¶Ï¸ÃÐÐÊÇ·ñÓÐ */
+            if (k + 2 < str_buffer.size()) {    //?Ð¶????????? */
                 string after = str_buffer.substr(k + 2);
                 auto index = after.find("*/");
-                if (index != string::npos) {    //ÓÐ */ ½áÊø×¢ÊÍ
+                if (index != string::npos) {    //?? */ ???????
                     is_multi_comment = 0;
                     str_buffer.erase(k, k + 2 + index + 1 - k + 1);
                     k -= 1;
                 } else {
-                    str_buffer.erase(k);    //·ñÔòÈ¥ÏÂÒ»ÐÐ²éÕÒ
+                    str_buffer.erase(k);    //?????????Ð²???
                     break;
                 }
             } else {
-                str_buffer.erase(k);    //·ñÔòÈ¥ÏÂÒ»ÐÐ²éÕÒ
+                str_buffer.erase(k);    //?????????Ð²???
                 break;
             }
 
         }
-            // ´¦Àí #includeºÍ #define
+            // ???? #include?? #define
         else if (str_buffer[k] == '#' && !(is_string || is_char)) {
-            is_pound_key = 1;    //±êÖ¾Î»ÖÃ1
+            is_pound_key = 1;    //???Î»??1
             auto std_res = stdPoundSentence(str_buffer.substr(k));
-            (str_buffer.erase(k)) += std_res;    //¸üÐÂ
+            (str_buffer.erase(k)) += std_res;    //????
             k += 2;
             istringstream string_in(std_res);
             string inst;
-            string_in >> inst >> inst;    //ÐèÒªÏÈ¶Áµô#
+            string_in >> inst >> inst;    //????????#
             if (inst == "include")
                 is_include = 1;
             else if (inst == "define") {
@@ -193,30 +193,31 @@ vector<string> PreProcess::getNextLine() {
             }
         }
 
-            //´¦Àí << ,>>,++,--,&&,||,::
+            //???? << ,>>,++,--,&&,||,::
         else if ((str_buffer[k] == '<' || str_buffer[k] == '>' || str_buffer[k] == '|'
                   || str_buffer[k] == '&' || str_buffer[k] == '+' || str_buffer[k] == '-'
                   || str_buffer[k] == ':') && !(is_string || is_char) && !(is_include && is_left_trail)
                  && (k + 1 < str_buffer.size())
                  && (str_buffer[k] == str_buffer[k + 1])) {
             addSpaceToSign(str_buffer, k, 2);
-            k += 3;    //È·±£Ìø¹ýµÚ¶þ¸ö·ûºÅ
+            k += 3;    //????????????????
         }
-            //´¦Àí ,{.}[,],(,),;,:
+            //???? ,{.}[,],(,),;,:
         else if ((str_buffer[k] == '{' || str_buffer[k] == '[' || str_buffer[k] == '('
                   || str_buffer[k] == ')' || str_buffer[k] == ']' || str_buffer[k] == '}'
                   || str_buffer[k] == ';' || str_buffer[k] == ',' || str_buffer[k] == ':') && !(is_string || is_char)) {
-            addSpaceToSign(str_buffer, k, 1); //Ôö¼Óºó
+            addSpaceToSign(str_buffer, k, 1); //?????
             k += 2;
         }
 
 
-            //´¦Àí+,-,*,/,%£¬=,<,>, +=,-=,*=,/= £¬%=,==,<=.>=
+            //????+,-,*,/,%??=,<,>, +=,-=,*=,/= ??%=,==,<=.>=
         else if ((str_buffer[k] == '+' || str_buffer[k] == '-' || str_buffer[k] == '*'
                   || str_buffer[k] == '/' || str_buffer[k] == '%' || str_buffer[k] == '='
                   || str_buffer[k] == '<' || str_buffer[k] == '>') && !(is_string || is_char) &&
                  !(str_buffer[k] != '>' && is_include && is_left_trail)) {
-            if ((str_buffer[k] == '+' || str_buffer[k] == '-') && (k >= 1 && str_buffer[k - 1] == 'e'))        //¿ÆÑ§¼ÆÊý·¨
+            if ((str_buffer[k] == '+' || str_buffer[k] == '-') &&
+                (k >= 1 && str_buffer[k - 1] == 'e'))        //?????????
                 continue;
             if (str_buffer[k] == '<' && is_include)
                 is_left_trail = 1;
@@ -230,7 +231,7 @@ vector<string> PreProcess::getNextLine() {
                 k += 2;
             }
         }
-            //´¦Àí !,|,&,~£¬^
+            //???? !,|,&,~??^
         else if ((str_buffer[k] == '~' || str_buffer[k] == '^' || str_buffer[k] == '!'
                   || str_buffer[k] == '|' || str_buffer[k] == '&') && !(is_string || is_char) &&
                  !(is_include && is_left_trail)) {

@@ -8,18 +8,19 @@
 #include <map>
 #include <string>
 #include <set>
-#include "PreProcess.h"
+#include "GrammarPreProcess.h"
 #include <iostream>
 
 
 typedef int StateNo;
 typedef int DotPos;
+
 #include <functional>
 #include <utility>
+
 // FIRST set and FOLLOW set
 typedef std::map<std::string, std::set<std::string>> FirstSet;
 typedef std::map<std::string, std::set<std::string>> FollowSet;
-
 
 
 // generator with dot position, such as A -> .aBc, A -> a.Bc
@@ -29,11 +30,12 @@ public:
     DotPos dot_pos;
     std::string lookahead;
     std::size_t hash;
+
     LR1Item(Generator generator_i, DotPos dot_pos_i, std::string lookahead_i) : generator(std::move(generator_i)),
                                                                                 dot_pos(dot_pos_i),
                                                                                 lookahead(std::move(lookahead_i)) {
         std::string str = generator.first;
-        for (auto &it : generator.second) {
+        for (auto &it: generator.second) {
             str += it;
         }
         str += std::to_string(dot_pos);
@@ -43,16 +45,19 @@ public:
     }
 
 };
+
 typedef std::set<LR1Item> DFANode;
 
 typedef std::set<DFANode> DFANodeSet;
+
 class DFAEdge {
 public:
     DFANode src;
     std::string eat;
     DFANode dst;
 
-    DFAEdge(DFANode _src, std::string _eat, DFANode _dst) : src(std::move(_src)), eat(std::move(_eat)), dst(std::move(_dst)) {
+    DFAEdge(DFANode _src, std::string _eat, DFANode _dst) : src(std::move(_src)), eat(std::move(_eat)),
+                                                            dst(std::move(_dst)) {
         std::hash<std::size_t> hash_hash;
 //        hash = hash_hash(src.hash + dst.hash);
     }
@@ -77,9 +82,9 @@ inline bool operator!=(const LR1Item &a, const LR1Item &b) {
 inline bool operator<(const DFAEdge &a, const DFAEdge &b) {
     if (a.eat != b.eat) {
         return a.eat < b.eat;
-    }else if (a.src != b.src) {
+    } else if (a.src != b.src) {
         return a.src < b.src;
-    }  else {
+    } else {
         return a.dst < b.dst;
     }
     return false;
@@ -89,9 +94,9 @@ inline bool operator<(const DFAEdge &a, const DFAEdge &b) {
 class LR1DFA {
 public:
     // 生成式，终结符和非终结符
-    const std::vector<Generator>& generators;
-    const std::set<std::string>& terminals;
-    const std::set<std::string>& non_terminals;
+    const std::vector<Generator> &generators;
+    const std::set<std::string> &terminals;
+    const std::set<std::string> &non_terminals;
     // FIRST集, FOLLOW集
     FirstSet first_set;
     FollowSet follow_set;
@@ -99,14 +104,14 @@ public:
     // start set and start symbol
     DFANode start_set;
     std::string start_symbol;
-    DFANode* dfa_nodes;
-    std::map<StateNo, DFANode*> dfa_state_map;
-    std::map<DFANode*, StateNo> dfa_state_map_reverse;
+    DFANode *dfa_nodes;
+    std::map<StateNo, DFANode *> dfa_state_map;
+    std::map<DFANode *, StateNo> dfa_state_map_reverse;
     std::map<StateNo, std::map<std::string, StateNo>> dfa_transition_map;
     // transition function
 
-    LR1DFA(const std::vector<Generator>& generators, const std::set<std::string>& terminals,
-           const std::set<std::string>& non_terminals);
+    LR1DFA(const std::vector<Generator> &generators, const std::set<std::string> &terminals,
+           const std::set<std::string> &non_terminals);
 
     void ConstructFirstSetAndFollowSet();
 
@@ -114,7 +119,7 @@ public:
 
     void GetClosure(std::set<LR1Item> &state_set);
 
-    void GetGoto(const std::set<LR1Item> &state_set, const std::string& X, std::set<LR1Item> &goto_set);
+    void GetGoto(const std::set<LR1Item> &state_set, const std::string &X, std::set<LR1Item> &goto_set);
 
     void PrintMemberVars();
 

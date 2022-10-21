@@ -3,14 +3,13 @@
 //
 
 #include <iomanip>
-#include "global_def.h"
-#include "symbol.h"
+#include "Symbol.h"
 
 std::map<unsigned long, Symbol> symbol_table;
 
 
 void installSymbol(const Symbol &sym) {
-    if(symbol_table.find(sym.hash) == symbol_table.end()) {
+    if (symbol_table.find(sym.hash) == symbol_table.end()) {
         symbol_table[sym.hash] = sym;
     }
 }
@@ -26,11 +25,11 @@ void printSymbolTable() {
               << std::setw(20) << "size"
               << std::endl;
 
-    for(auto &item : symbol_table) {
+    for (auto &item: symbol_table) {
         std::cout << std::setw(20) << item.second.name
-                  << std::setw(10) << (item.second.hash)%10000
+                  << std::setw(10) << (item.second.hash) % 10000
                   << std::setw(10) << item.second.type
-                  << std::setw(10) << (item.second.binding==ID_CLASS::GLOBAL?"GLOBAL":"LOCAL")
+                  << std::setw(10) << (item.second.binding == ID_CLASS::GLOBAL ? "GLOBAL" : "LOCAL")
                   << std::setw(10) << "NOT_IMP"
                   << std::setw(20) << "NOT_IMP"
                   << std::setw(20) << "NOT_IMP"

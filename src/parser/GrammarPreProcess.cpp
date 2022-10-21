@@ -2,8 +2,8 @@
 // Created by Neko Toxin on 2022/10/14.
 //
 
-#include "PreProcess.h"
-#include "utils.h"
+#include "GrammarPreProcess.h"
+#include "../common/utils.h"
 #include <fstream>
 #include <iostream>
 
@@ -11,7 +11,7 @@ const std::string ANY_SYMBOL = "ANY_SYM";
 const std::string END_SYMBOL = "$";
 const std::string NULL_SYMBOL = "NULL";
 
-PreProcess::PreProcess(std::string source_code_from_lexer_file, std::string grammar_file) {
+GrammarPreProcess::GrammarPreProcess(std::string grammar_file) {
     auto *grammar = new std::fstream(grammar_file);
     if (!grammar->is_open()) {
         std::cout << "Grammar file not found" << std::endl;

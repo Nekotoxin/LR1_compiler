@@ -90,8 +90,10 @@ void ParsingTable::ConstructParsingTable() {
                     // 特殊处理，猜测非终结符X可能为空，否则无法兼容形为 S -> { X } , X -> NULL 的文法
                     if (lr1_dfa->nullable_set.find(X) != lr1_dfa->nullable_set.end()) {
                         auto generator_tmp = std::make_pair(X, std::vector<std::string>{NULL_SYMBOL});
-                        auto generator_no = std::find(generators.begin(), generators.end(), generator_tmp) - generators.begin();
-                        action_table[std::make_pair(state_no, NULL_SYMBOL)] = std::make_pair(Action::reduce, generator_no);
+                        auto generator_no =
+                                std::find(generators.begin(), generators.end(), generator_tmp) - generators.begin();
+                        action_table[std::make_pair(state_no, NULL_SYMBOL)] = std::make_pair(Action::reduce,
+                                                                                             generator_no);
                     }
                 }
             }
