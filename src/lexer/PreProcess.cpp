@@ -1,5 +1,6 @@
 #include "PreProcess.h"
 #include<iostream>
+#include<cstring>
 
 static void addSpaceToSign(string &str, int index, int sign_width) {
     str.insert(index, 1, ' ');

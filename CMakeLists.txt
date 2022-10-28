@@ -4,6 +4,7 @@ project(compiler)
 set(CMAKE_CXX_STANDARD 14)
 
 include_directories(lexer, parser, src/common)
+set(CMAKE_CXX_COMPILER "g++")
 
 aux_source_directory(src/lexer LEXER_SRC)
 aux_source_directory(src/parser PARSER_SRC)

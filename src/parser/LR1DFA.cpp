@@ -3,6 +3,7 @@
 //
 
 #include "LR1DFA.h"
+#include <algorithm>
 
 void printLR1ItemSet(const std::string msg, const std::set<LR1Item> &lr1ItemSet) {
     std::cout << msg << std::endl;

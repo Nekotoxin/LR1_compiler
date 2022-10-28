@@ -3,7 +3,7 @@
 //
 
 #include "ParsingTable.h"
-
+#include <algorithm>
 #include <utility>
 
 

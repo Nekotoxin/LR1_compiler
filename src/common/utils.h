@@ -17,7 +17,8 @@ std::string trim(std::string str) {
     str = str.substr(i);
     // skip all space and \t
     i = str.size() - 1;
-    while (str[i] == ' ' || str[i] == '\t') {
+    // trim \r if exist
+    while (str[i] == ' ' || str[i] == '\t' || str[i] == '\r') {
         i--;
     }
     str = str.substr(0, i + 1);
