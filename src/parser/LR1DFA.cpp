@@ -41,7 +41,7 @@ LR1DFA::LR1DFA(const std::vector<Generator> &_generators, const std::set<std::st
     }
     ConstructFirstSetAndFollowSet();
     PrintMemberVars();
-    std::cout<<"\n别急，正在构造LR(1) DFA\n";
+    std::cout << "\n别急，正在构造LR(1) DFA\n";
     ConstructLR1DFA();
 }
 

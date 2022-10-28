@@ -22,14 +22,13 @@ typedef int DotPos;
 typedef std::map<std::string, std::set<std::string>> FirstSet;
 typedef std::map<std::string, std::set<std::string>> FollowSet;
 
-
 // generator with dot position, such as A -> .aBc, A -> a.Bc
 class LR1Item {
 public:
     Generator generator;
     DotPos dot_pos;
     std::string lookahead;
-    std::size_t hash;
+    std::size_t hash;   // for faster comparison
 
     LR1Item(Generator generator_i, DotPos dot_pos_i, std::string lookahead_i) : generator(std::move(generator_i)),
                                                                                 dot_pos(dot_pos_i),
@@ -50,34 +49,22 @@ typedef std::set<LR1Item> DFANode;
 
 typedef std::set<DFANode> DFANodeSet;
 
-class DFAEdge {
-public:
-    DFANode src;
-    std::string eat;
-    DFANode dst;
-
-    DFAEdge(DFANode _src, std::string _eat, DFANode _dst) : src(std::move(_src)), eat(std::move(_eat)),
-                                                            dst(std::move(_dst)) {
-        std::hash<std::size_t> hash_hash;
-//        hash = hash_hash(src.hash + dst.hash);
-    }
-};
+// DFAedge: (source_state, input_symbol) -> target_state
+typedef struct {
+    // not use pointer here, because it will be used as key in map
+    DFANode src;    // source state
+    std::string eat;    // input symbol
+    DFANode dst;    // target state
+} DFAEdge;
 
 typedef std::set<DFAEdge> DFAEdgeSet;
 
-//typedef std::map<std::pair<DFANode, std::string>, DFANode> DFAEdgeSet;
+// std::set need to overload operator <
+inline bool operator<(const LR1Item &a, const LR1Item &b) { return a.hash < b.hash; }
 
-inline bool operator<(const LR1Item &a, const LR1Item &b) {
-    return a.hash < b.hash;
-}
+inline bool operator==(const LR1Item &a, const LR1Item &b) { return a.hash == b.hash; }
 
-inline bool operator==(const LR1Item &a, const LR1Item &b) {
-    return a.hash == b.hash;
-}
-
-inline bool operator!=(const LR1Item &a, const LR1Item &b) {
-    return !(a == b);
-}
+inline bool operator!=(const LR1Item &a, const LR1Item &b) { return !(a == b); }
 
 inline bool operator<(const DFAEdge &a, const DFAEdge &b) {
     if (a.eat != b.eat) {
@@ -87,7 +74,6 @@ inline bool operator<(const DFAEdge &a, const DFAEdge &b) {
     } else {
         return a.dst < b.dst;
     }
-    return false;
 }
 
 
@@ -124,8 +110,6 @@ public:
     void PrintMemberVars();
 
     bool IsTerminal(std::string symbol);
-
-
 };
 
 

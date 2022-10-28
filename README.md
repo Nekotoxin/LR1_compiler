@@ -16,15 +16,13 @@ make
 
 ![Screen Shot 2022-10-21 at 13.30.24](https://user-images.githubusercontent.com/75596353/197121504-f0977be8-aed6-49a6-b273-be5d1e7db001.png)
 
-
-
 ### 2. 结构说明
 
 1. .sl文件用于词法分析器构建
 2. .sy文件用于语法分析器构建
 3. 解析流程:
-   1. 使用词法分析器分析源代码, 输入源代码, 输出TokenStream
-   2. 使用语法分析器分析语法, 输入TokenStream, 输出AST语法树
+    1. 使用词法分析器分析源代码, 输入源代码, 输出TokenStream
+    2. 使用语法分析器分析语法, 输入TokenStream, 输出AST语法树
 4. src/common用于存放lexer和parser共同需要的部分, 比如符号表
 
 ### 3. 待办
@@ -37,9 +35,9 @@ make
 
    还需要做以下支持
 
-   1. 现在只支持一个函数, 将来要支持多个函数
-   2. 支持连续比较: <, >, <=等等
-   3. 支持连乘连除
+    1. 现在只支持一个函数, 将来要支持多个函数
+    2. 支持连续比较: <, >, <=等等
+    3. 支持连乘连除
 
 3. AST部分, 在对源代码进行解析的过程中完成AST树的构建. 这部分完全没做
 
@@ -55,27 +53,21 @@ make
 
    设置`初始化lexer`,`初始化parser`,`编译`等按键, **dfa, action和goto表构建相当耗时间, 不要每次都重新使用.sl, .sy文件初始化词法语法分析器**
 
-   
+**前端展示内容**: 可视化DFA[时间不够就不做], 可视化ACTION和GOTO表, 可视化移进规约过程, 可视化语法分析树
 
-   **前端展示内容**: 可视化DFA[时间不够就不做], 可视化ACTION和GOTO表, 可视化移进规约过程, 可视化语法分析树
+1. 前端可以用python写, 用python直接从命令行启动tcc, tcc将json文件保存到本地, 然后python读, 可视化
 
-   
+2. 前端也可以用js写, 结合qt, qt中嵌入一个浏览器视图用来渲染js文件
 
-   1. 前端可以用python写, 用python直接从命令行启动tcc, tcc将json文件保存到本地, 然后python读, 可视化
+   既然有js了,那可视化库就很多了
 
-   2. 前端也可以用js写, 结合qt, qt中嵌入一个浏览器视图用来渲染js文件
+3. 如果有别的方法也可以
 
-      既然有js了,那可视化库就很多了
+https://cyberzhg.github.io/toolbox/lr1, 这是一个开源的文法可视化网页, 除了编译过程都有
 
-   3. 如果有别的方法也可以
+![Screen Shot 2022-10-21 at 13.32.56](https://user-images.githubusercontent.com/75596353/197121530-3c5a3dfd-ee26-4670-abda-07e6c9a164eb.png)
 
-   https://cyberzhg.github.io/toolbox/lr1, 这是一个开源的文法可视化网页, 除了编译过程都有
-
-   ![Screen Shot 2022-10-21 at 13.32.56](https://user-images.githubusercontent.com/75596353/197121530-3c5a3dfd-ee26-4670-abda-07e6c9a164eb.png)
-
-   ![Screen Shot 2022-10-21 at 13.33.15](https://user-images.githubusercontent.com/75596353/197121548-4d0f2f86-052c-48e5-8cd2-d527f532662b.png)
-
-
+![Screen Shot 2022-10-21 at 13.33.15](https://user-images.githubusercontent.com/75596353/197121548-4d0f2f86-052c-48e5-8cd2-d527f532662b.png)
 
 文法需要进一步完善, 我们希望最终能够解析如下源文件:
 

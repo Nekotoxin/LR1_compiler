@@ -6,6 +6,7 @@
 #define LEX_TOKEN_H
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <iostream>
 #include <map>
@@ -26,7 +27,7 @@ public:
         col = 0;
     }
 
-    Token(const string &name, const string &token_name, int row, int col) : name(name), token_name(token_name),
+    Token(string name, const string &token_name, int row, int col) : name(std::move(name)), token_name(token_name),
                                                                             row(row), col(col) {}
 
 };
@@ -34,7 +35,7 @@ public:
 
 typedef vector<Token> TokenStream;
 
-void installToken(TokenStream &token_stream,const Token& tok);
+void installToken(TokenStream &token_stream, const Token &tok);
 
 void printTokenList(const TokenStream &token_stream);
 

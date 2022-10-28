@@ -3,7 +3,7 @@
 
 TokenStream token_stream;
 
-void installToken(TokenStream &token_stream,const Token& tok) {
+void installToken(TokenStream &token_stream, const Token &tok) {
     token_stream.push_back(tok);
 }
 

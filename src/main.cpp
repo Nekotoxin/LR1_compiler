@@ -7,7 +7,7 @@
 #include "lexer/Lex.h"
 #include "Token.h"
 
-int main(int argc, char*argv[]) {
+int main(int argc, char *argv[]) {
     // tcc -l ../test_files/grammar.txt -y ../test_files/grammar.txt -s ../test_files/test.c
     if (argc != 7) {
         std::cout << "Usage: tcc -l <lex_file> -y <grammar_file> -s <source_file>" << std::endl;
