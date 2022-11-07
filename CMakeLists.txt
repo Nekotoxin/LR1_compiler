@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 project(compiler)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES 0)
 
 include_directories(lexer, parser, src/common)
-set(CMAKE_CXX_COMPILER "g++")
 
 aux_source_directory(src/lexer LEXER_SRC)
 aux_source_directory(src/parser PARSER_SRC)
