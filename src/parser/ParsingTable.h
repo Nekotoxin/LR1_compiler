@@ -12,6 +12,8 @@
 #include <string>
 #include "GrammarPreProcess.h"
 #include "LR1DFA.h"
+#include "json.hpp"
+using namespace nlohmann;
 
 typedef enum {
     accept = 'a', shift = 's', reduce = 'r', go = 'g', error = 'e'
