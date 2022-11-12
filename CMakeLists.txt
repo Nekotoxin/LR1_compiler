@@ -4,7 +4,10 @@ project(compiler)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES 0)
 
-file(GLOB_RECURSE TCC_SRC "src/*.cpp")
+include_directories(lexer, parser, src/common)
 
-add_executable(tcc src/main.cpp ${TCC_SRC})
-target_include_directories(tcc PUBLIC src/lexer src/parser src/common deps)
+aux_source_directory(src/lexer LEXER_SRC)
+aux_source_directory(src/parser PARSER_SRC)
+aux_source_directory(src/common COMMON_SRC)
+
+add_executable(tcc src/main.cpp ${LEXER_SRC} ${PARSER_SRC} ${COMMON_SRC})

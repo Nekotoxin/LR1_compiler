@@ -21,12 +21,11 @@ vector<string> PreProcess::readWordFromStream(istringstream &str_in) {
             } else
                 res.push_back(tmp);
         }
-        //???? "??????getc???
         if (tmp == "\"" || tmp == "'") {
             const char flag = tmp[0];
             string str_to_read;
             int prev = 0, cur = 0;
-            cur = str_in.get();//???????????????????
+            cur = str_in.get();
             bool is_found = 0;
             while (!str_in.eof()) {
                 cur = str_in.get();
@@ -38,10 +37,10 @@ vector<string> PreProcess::readWordFromStream(istringstream &str_in) {
                 prev = cur;
             }
             if (is_found) {
-                str_to_read.pop_back();    //??????????
+                str_to_read.pop_back();
                 str_to_read.insert(0, 1, flag);
                 str_to_read.push_back(flag);
-                res.push_back(str_to_read);    //?????????
+                res.push_back(str_to_read);
             }
         }
     }
@@ -51,17 +50,11 @@ vector<string> PreProcess::readWordFromStream(istringstream &str_in) {
 void PreProcess::dealDefineSentence(const string &str) {
     istringstream str_in(str);
     string first_key;
-    str_in >> first_key >> first_key >> first_key;    //????????????????? # define
+    str_in >> first_key >> first_key >> first_key;
     vector<string> second_key_list = readWordFromStream(str_in);
     marco.insert(pair<string, vector<string>>(first_key, second_key_list));
 }
 
-/*
-??????  "# ??? ???? (????????????)"
-?????# define A 1 << 322;
-      # include <iostream>
-?????????????????????????define????include???
-*/
 static string stdPoundSentence(const string &str) {
     string res = str;
     for (int k = 0; k < res.size(); k++) {
@@ -131,10 +124,8 @@ vector<string> PreProcess::getNextLine() {
                 break;
             }
         }
-        //????????????????????
         if (str_buffer[k] == ' ')
             continue;
-            //?????????,?涨??????????? "+???+????+???+" , ???????????????'???????????????????????????????????????
         else if (str_buffer[k] == '"') {
             if ((k == 0 || (str_buffer[k - 1] != '\\') && !(str_buffer[k - 1] == '\'' && !is_string)) &&
                 !(is_single_comment || is_multi_comment)) {
@@ -149,14 +140,12 @@ vector<string> PreProcess::getNextLine() {
                 is_char = !is_char;
             }
         }
-            // ?????????
         else if ((str_buffer[k] == '/') && (k + 1 < str_buffer.size()) && (str_buffer[k + 1] == '/') &&
                  !(is_string || is_char) && !(is_include && is_left_trail)) {
             str_buffer.erase((k - 1) >= 0 ? k - 1 : 0);
             is_single_comment = 1;
             break;
         }
-            //??????????
         else if (str_buffer[k] == '/' && k + 1 < str_buffer.size() && str_buffer[k + 1] == '*' &&
                  !(is_string || is_char) && !(is_include && is_left_trail)) {
             if (!is_multi_comment)    //???????? /*
@@ -178,7 +167,6 @@ vector<string> PreProcess::getNextLine() {
             }
 
         }
-            // ???? #include?? #define
         else if (str_buffer[k] == '#' && !(is_string || is_char)) {
             is_pound_key = 1;    //???λ??1
             auto std_res = stdPoundSentence(str_buffer.substr(k));
@@ -194,7 +182,6 @@ vector<string> PreProcess::getNextLine() {
             }
         }
 
-            //???? << ,>>,++,--,&&,||,::
         else if ((str_buffer[k] == '<' || str_buffer[k] == '>' || str_buffer[k] == '|'
                   || str_buffer[k] == '&' || str_buffer[k] == '+' || str_buffer[k] == '-'
                   || str_buffer[k] == ':') && !(is_string || is_char) && !(is_include && is_left_trail)
@@ -203,7 +190,6 @@ vector<string> PreProcess::getNextLine() {
             addSpaceToSign(str_buffer, k, 2);
             k += 3;    //????????????????
         }
-            //???? ,{.}[,],(,),;,:
         else if ((str_buffer[k] == '{' || str_buffer[k] == '[' || str_buffer[k] == '('
                   || str_buffer[k] == ')' || str_buffer[k] == ']' || str_buffer[k] == '}'
                   || str_buffer[k] == ';' || str_buffer[k] == ',' || str_buffer[k] == ':') && !(is_string || is_char)) {
@@ -232,8 +218,7 @@ vector<string> PreProcess::getNextLine() {
                 k += 2;
             }
         }
-            //???? !,|,&,~??^
-        else if ((str_buffer[k] == '~' || str_buffer[k] == '^' || str_buffer[k] == '!'
+             else if ((str_buffer[k] == '~' || str_buffer[k] == '^' || str_buffer[k] == '!'
                   || str_buffer[k] == '|' || str_buffer[k] == '&') && !(is_string || is_char) &&
                  !(is_include && is_left_trail)) {
             addSpaceToSign(str_buffer, k, 1);

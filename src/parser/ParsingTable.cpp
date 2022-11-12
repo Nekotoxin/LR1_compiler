@@ -142,6 +142,7 @@ void ParsingTable::ConstructParsingTable() {
 }
 
 ParsingTable::~ParsingTable() {
+    if(lr1_dfa)
     delete lr1_dfa;
 }
 

@@ -81,7 +81,14 @@ TokenStream Lex::lexing() {
                 }
             }
             if (mismatch) {
-                std::cerr << "mismatch word: " << word << std::endl;
+                std::cerr << "mismatch word: " << word << " , row:"<<row_no<<" col:"<<col_no<< std::endl;
+                for(auto &regex_token:regex2token){
+                    std::regex reg(regex_token.first);
+                    if(std::regex_search(word,reg)){
+                        std::cerr<<"expected:"<<regex_token.second<<std::endl;
+                        break;
+                    }
+                }
                 exit(1);
             } else {
                 // install to token table
@@ -99,10 +106,10 @@ TokenStream Lex::lexing() {
                     sym.hash = std::hash<std::string>{}(word) + (scope_count == 0);
                     sym.binding = (scope_count == 0 ? ID_CLASS::GLOBAL : ID_CLASS::LOCAL);
                     installSymbol(sym);
-                    std::cout << "<\"" << match_res.first << "\", " << match_res.second + "-HASH-" << sym.hash % 10000
-                              << ">";
+//                    std::cout << "<\"" << match_res.first << "\", " << match_res.second + "-HASH-" << sym.hash % 10000
+//                              << ">";
                 } else {
-                    std::cout << "<\"" << match_res.first << "\", " << match_res.second << "> ";
+//                    std::cout << "<\"" << match_res.first << "\", " << match_res.second << "> ";
                 }
                 if (word == "{") {
                     scope_count++;
@@ -111,11 +118,11 @@ TokenStream Lex::lexing() {
                 }
             }
         }
-        std::cout << std::endl;
+       // std::cout << std::endl;
     }
-    std::cout << std::endl;
-    printSymbolTable();
-    std::cout << std::endl;
+    //std::cout << std::endl;
+    //printSymbolTable();
+   // std::cout << std::endl;
     printTokenList(token_stream);
     return token_stream;
 }

@@ -9,12 +9,12 @@ int main() {
         a=a-1;
     }
 
-    if(a){
+    if (a){
         a=b;
     }else if(b) {
         b = a;
     }else if(a+b){
-            // 测试空块
+        // 测试空块
     }else{
         // 函数可以在表达式中调用，但是不能单独调用
         // 应该完善
