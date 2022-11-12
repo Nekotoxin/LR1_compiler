@@ -1,0 +1,45 @@
+terminals : 21
+NULL $ ( ) * + , - / ; = ELSE FLOAT IDENTIFIER IF INT I_CONSTANT RETURN VOID WHILE { } 
+non_terminals : 19
+FTYPE Program call if语句 return语句 start_point while语句 加法表达式 因子 声明语句 实参 实参列表 类型 表达式 语句 语句串 语句块 赋值语句 项 
+generator:40
+start_point -> Program $ 
+Program -> 类型 IDENTIFIER ( ) 语句块 
+类型 -> INT 
+类型 -> FLOAT 
+类型 -> VOID 
+语句块 -> { 语句串 } 
+语句串 -> NULL 
+语句串 -> 语句串 语句 
+语句 -> 声明语句 
+语句 -> 赋值语句 
+语句 -> if语句 
+语句 -> while语句 
+语句 -> return语句 
+语句 -> 语句块 
+声明语句 -> 类型 IDENTIFIER ; 
+声明语句 -> 类型 IDENTIFIER = 表达式 ; 
+赋值语句 -> IDENTIFIER = 表达式 ; 
+return语句 -> RETURN 表达式 ; 
+return语句 -> RETURN ; 
+while语句 -> WHILE ( 表达式 ) 语句块 
+if语句 -> IF ( 表达式 ) 语句块 
+if语句 -> IF ( 表达式 ) 语句块 ELSE 语句块 
+if语句 -> IF ( 表达式 ) 语句块 ELSE if语句 
+表达式 -> 加法表达式 
+加法表达式 -> 项 
+加法表达式 -> 项 + 加法表达式 
+加法表达式 -> 项 - 加法表达式 
+项 -> 因子 
+项 -> 因子 * 因子 
+项 -> 因子 / 因子 
+因子 -> I_CONSTANT 
+因子 -> ( 表达式 ) 
+因子 -> IDENTIFIER FTYPE 
+FTYPE -> NULL 
+FTYPE -> call 
+call -> ( 实参 ) 
+实参 -> NULL 
+实参 -> 实参列表 
+实参列表 -> 表达式 
+实参列表 -> 实参列表 , 表达式 

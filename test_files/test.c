@@ -9,10 +9,10 @@ int main() {
         a=a-1;
     }
 
-    if(a){
+    if (a){
         a=b;
     }else if(b) {
-        b = a;
+        b = a
     }else if(a+b){
             // 测试空块
     }else{

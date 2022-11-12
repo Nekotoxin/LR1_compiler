@@ -15,11 +15,11 @@ using namespace std;
 class PreProcess {
 protected:
     ifstream *in;
-    map<string, vector<string>> marco;    //ºê¶¨ÒåµÄmap
-    void dealDefineSentence(const string &str);    //´¦Àíºê¶¨Òå
-    vector<string> readWordFromStream(istringstream &str_in);    //´Ó×Ö·û´®Á÷¶ÁÈ¡µ¥´Ê
+    map<string, vector<string>> marco;    //å®å®šä¹‰çš„map
+    void dealDefineSentence(const string &str);    //å¤„ç†å®å®šä¹‰
+    vector<string> readWordFromStream(istringstream &str_in);    //ä»å­—ç¬¦ä¸²æµè¯»å–å•è¯
 public:
-    PreProcess(ifstream *p);    //¹¹Ôìº¯Êı£¬´«ÈëÎÄ¼şÖ¸Õë£¨Íâ²¿´ò¿ª¹Ø±Õ£©
+    PreProcess(ifstream *p);    //æ„é€ å‡½æ•°ï¼Œä¼ å…¥æ–‡ä»¶æŒ‡é’ˆï¼ˆå¤–éƒ¨æ‰“å¼€å…³é—­ï¼‰
     bool hasNextLine();
 
     vector<string> getNextLine();

@@ -81,7 +81,14 @@ TokenStream Lex::lexing() {
                 }
             }
             if (mismatch) {
-                std::cerr << "mismatch word: " << word << std::endl;
+                std::cerr << "mismatch word: " << word << " , row:"<<row_no<<" col:"<<col_no<< std::endl;
+                for(auto &regex_token:regex2token){
+                    std::regex reg(regex_token.first);
+                    if(std::regex_search(word,reg)){
+                        std::cerr<<"expected:"<<regex_token.second<<std::endl;
+                        break;
+                    }
+                }
                 exit(1);
             } else {
                 // install to token table

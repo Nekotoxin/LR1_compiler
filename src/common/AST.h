@@ -1,14 +1,55 @@
 //
-// Created by Neko Toxin on 2022/10/14.
+// Created by zhangxun on 2022/11/8.
 //
 
-#ifndef PARSER_AST_H
-#define PARSER_AST_H
+#ifndef COMPILER_TREE_H
+#define COMPILER_TREE_H
+#include<string>
+#include"../parser/GrammarPreProcess.h"
+#include<vector>
+#include<fstream>
+#include<json.hpp>
 
-
-class AST {
-
+using json=nlohmann::json;
+using ordered_json=nlohmann::ordered_json;
+enum nodeType
+{
+    leafNode,
+    rootNode,
 };
 
 
-#endif //PARSER_AST_H
+struct SyntaxTreeNode {
+private:
+public:
+    std::string name;
+    std::string token_name;
+    std::vector<SyntaxTreeNode *> child;
+    nodeType type;
+
+    ordered_json to_json();
+
+    ~SyntaxTreeNode(){}
+};
+
+
+static void treeNodeClear(SyntaxTreeNode* node){
+    // TODO: BUG
+//    for(auto &item:node->child)
+//        treeNodeClear(item);
+//    delete node;
+}
+
+
+class AST
+{
+public:
+    SyntaxTreeNode * root;
+    std::string to_json(const std::string path="");
+    ~AST(){ treeNodeClear(root);}
+private:
+    ordered_json dfsTraverse(SyntaxTreeNode* curNode);
+};
+
+
+#endif //COMPILER_TREE_H

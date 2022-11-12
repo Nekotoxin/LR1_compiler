@@ -6,6 +6,24 @@
 #include "parser/Parser.h"
 #include "lexer/Lex.h"
 
+
+void func(std::string lex_file,std::string yacc_file,std::string source_file)
+{
+    Lex l(lex_file, source_file);
+    auto token_stream = l.lexing();
+
+    Parser p;
+    AST ast_tree;
+    auto flag=p.loadParsingTable("parse_table.txt","parse_table.csv");
+    if(flag)
+         ast_tree=p.Parse(token_stream);
+    else{
+        Parser pp(yacc_file);
+        ast_tree=pp.Parse(token_stream);
+    }
+    
+}
+
 int main(int argc, char *argv[]) {
     // tcc -l ../test_files/grammar.txt -y ../test_files/grammar.txt -s ../test_files/test.c
     if (argc != 7) {
@@ -28,9 +46,14 @@ int main(int argc, char *argv[]) {
     Lex l(lex_file, source_file);
     auto token_stream = l.lexing();
 
-    Parser p(yacc_file);
-    auto ast_tree = p.Parse(token_stream);
-
+    Parser p;
+    auto flag=p.loadParsingTable("parse_table.txt","parse_table.csv");
+    if(flag)
+        auto ast_tree=p.Parse(token_stream);
+    else{
+        Parser pp(yacc_file);
+        auto ast_tree=pp.Parse(token_stream);
+    }
     return 0;
 }
 
