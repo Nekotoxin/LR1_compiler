@@ -19,7 +19,7 @@ Parser::Parser(std::string grammar_file) {
     time_t start = clock();
     parsingTable = new ParsingTable(this->generators, this->terminals, this->non_terminals);
     time_t end = clock();
-    saveParsingTable("D:\\LR1_compiler-master\\parse_table.txt","D:\\LR1_compiler-master\\parse_table.csv");
+    saveParsingTable("../parse_table.txt","../parse_table.csv");
     std::cout << "Parsing table generated in " << (double) (end - start) / CLOCKS_PER_SEC << "s" << std::endl;
 }
 
@@ -76,7 +76,8 @@ AST Parser::Parse(TokenStream &token_stream) {
             // TODO: end add node
 
         } else {
-            std::cout << "❌ Error: " << symbol << " is not expected at state " << state << std::endl;
+            std::cerr << "❌ Error: " << symbol << " is not expected at state " << state
+            <<", row:"<<token_it->row<<" col:"<<token_it->col<< std::endl;
             // TODO: 调用错误处理函数
             return AST();
         }
@@ -157,7 +158,7 @@ AST Parser::Parse(TokenStream &token_stream) {
                 // TODO: add
                 if (parsingTable->goto_table.find(std::make_pair(state, generator.first)) ==
                     parsingTable->goto_table.end()) {
-                    std::cout << "❌ Error: " << generator.first << " is not expected at state " << state
+                    std::cerr << "❌ Error: " << generator.first << " is not expected at state " << state
                               <<", row:"<<token_it->row<<" col:"<<token_it->col<<" "<< std::endl;
 
                     // TODO: 调用错误处理函数
@@ -172,14 +173,14 @@ AST Parser::Parse(TokenStream &token_stream) {
                 break;
             case accept:
                 tree.root=node_stack.top(); //生成语法树
-                tree.to_json("D:\\LR1_compiler-master\\json_tree.json");
                 std::cout << "✅ Accept" << std::endl;
                 end = clock();
                 std::cout << "Parse部分耗时：" << (double) (end - start) / CLOCKS_PER_SEC << "s" << std::endl;
                 // TODO: 生成AST
                 return tree;
             case error:
-                std::cout << "❌ Error: " << symbol << " is not expected at state " << state << std::endl;
+                std::cerr << "❌ Error: " << symbol << " is not expected at state " << state
+                        <<", row:"<<token_it->row<<" col:"<<token_it->col<< std::endl;
                 // TODO: 调用错误处理函数
 
                 tree.root= nullptr;
