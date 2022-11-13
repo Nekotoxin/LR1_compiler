@@ -44,7 +44,15 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
     };
 
     auto file_exist = [](const std::string &name) {
-        return (access(name.c_str(), F_OK) != -1);
+#ifdef __APPLE__
+        ifstream f(name.c_str());
+        auto res = f.good();
+        f.close();
+        return res;
+#else
+        struct stat buffer{};
+        return (stat(name.c_str(), &buffer) == 0);
+#endif
     };
 
 

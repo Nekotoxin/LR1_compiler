@@ -10,6 +10,9 @@
 #include <sys/stat.h>
 #include <stack>
 #include <stdexcept>
+#ifdef __APPLE__
+#include <sstream>
+#endif
 
 
 Parser::Parser(std::string grammar_file) {
