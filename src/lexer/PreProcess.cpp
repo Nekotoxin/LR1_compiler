@@ -102,7 +102,7 @@ vector<string> PreProcess::getNextLine() {
     char buffer[BufferMaxSize];
     // get line \r\n
     char ch;
-    int count=0;
+    int count = 0;
     while ((ch = in->get()) != EOF) {
         //save to buffer
         if (ch == '\r') {
@@ -160,15 +160,13 @@ vector<string> PreProcess::getNextLine() {
                 k += 2;
                 is_char = !is_char;
             }
-        }
-        else if ((str_buffer[k] == '/') && (k + 1 < str_buffer.size()) && (str_buffer[k + 1] == '/') &&
-                 !(is_string || is_char) && !(is_include && is_left_trail)) {
+        } else if ((str_buffer[k] == '/') && (k + 1 < str_buffer.size()) && (str_buffer[k + 1] == '/') &&
+                   !(is_string || is_char) && !(is_include && is_left_trail)) {
             str_buffer.erase((k - 1) >= 0 ? k - 1 : 0);
             is_single_comment = 1;
             break;
-        }
-        else if (str_buffer[k] == '/' && k + 1 < str_buffer.size() && str_buffer[k + 1] == '*' &&
-                 !(is_string || is_char) && !(is_include && is_left_trail)) {
+        } else if (str_buffer[k] == '/' && k + 1 < str_buffer.size() && str_buffer[k + 1] == '*' &&
+                   !(is_string || is_char) && !(is_include && is_left_trail)) {
             if (!is_multi_comment)    //???????? /*
                 is_multi_comment = 1;
             if (k + 2 < str_buffer.size()) {    //?ж????????? */
@@ -187,8 +185,7 @@ vector<string> PreProcess::getNextLine() {
                 break;
             }
 
-        }
-        else if (str_buffer[k] == '#' && !(is_string || is_char)) {
+        } else if (str_buffer[k] == '#' && !(is_string || is_char)) {
             is_pound_key = 1;    //???λ??1
             auto std_res = stdPoundSentence(str_buffer.substr(k));
             (str_buffer.erase(k)) += std_res;    //????
@@ -201,19 +198,17 @@ vector<string> PreProcess::getNextLine() {
             else if (inst == "define") {
                 is_define = 1;
             }
-        }
-
-        else if ((str_buffer[k] == '<' || str_buffer[k] == '>' || str_buffer[k] == '|'
-                  || str_buffer[k] == '&' || str_buffer[k] == '+' || str_buffer[k] == '-'
-                  || str_buffer[k] == ':') && !(is_string || is_char) && !(is_include && is_left_trail)
-                 && (k + 1 < str_buffer.size())
-                 && (str_buffer[k] == str_buffer[k + 1])) {
+        } else if ((str_buffer[k] == '<' || str_buffer[k] == '>' || str_buffer[k] == '|'
+                    || str_buffer[k] == '&' || str_buffer[k] == '+' || str_buffer[k] == '-'
+                    || str_buffer[k] == ':') && !(is_string || is_char) && !(is_include && is_left_trail)
+                   && (k + 1 < str_buffer.size())
+                   && (str_buffer[k] == str_buffer[k + 1])) {
             addSpaceToSign(str_buffer, k, 2);
             k += 3;    //????????????????
-        }
-        else if ((str_buffer[k] == '{' || str_buffer[k] == '[' || str_buffer[k] == '('
-                  || str_buffer[k] == ')' || str_buffer[k] == ']' || str_buffer[k] == '}'
-                  || str_buffer[k] == ';' || str_buffer[k] == ',' || str_buffer[k] == ':') && !(is_string || is_char)) {
+        } else if ((str_buffer[k] == '{' || str_buffer[k] == '[' || str_buffer[k] == '('
+                    || str_buffer[k] == ')' || str_buffer[k] == ']' || str_buffer[k] == '}'
+                    || str_buffer[k] == ';' || str_buffer[k] == ',' || str_buffer[k] == ':') &&
+                   !(is_string || is_char)) {
             addSpaceToSign(str_buffer, k, 1); //?????
             k += 2;
         }
@@ -238,10 +233,9 @@ vector<string> PreProcess::getNextLine() {
                 addSpaceToSign(str_buffer, k, 1);
                 k += 2;
             }
-        }
-             else if ((str_buffer[k] == '~' || str_buffer[k] == '^' || str_buffer[k] == '!'
-                  || str_buffer[k] == '|' || str_buffer[k] == '&') && !(is_string || is_char) &&
-                 !(is_include && is_left_trail)) {
+        } else if ((str_buffer[k] == '~' || str_buffer[k] == '^' || str_buffer[k] == '!'
+                    || str_buffer[k] == '|' || str_buffer[k] == '&') && !(is_string || is_char) &&
+                   !(is_include && is_left_trail)) {
             addSpaceToSign(str_buffer, k, 1);
             k += 2;
         }

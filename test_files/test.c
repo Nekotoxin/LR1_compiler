@@ -1,4 +1,4 @@
-intss main() {
+int main() {
     int a = 1 + 2 + 3;
     int b = (a + a) / (a * a);
     while (a) {
@@ -6,7 +6,7 @@ intss main() {
     }
 
     if (a) {
-        a = b
+        a = b;
     } else if (b) {
         b = a;
     } else if (a + b) {

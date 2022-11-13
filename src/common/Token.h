@@ -28,7 +28,7 @@ public:
     }
 
     Token(string name, const string &token_name, int row, int col) : name(std::move(name)), token_name(token_name),
-                                                                            row(row), col(col) {}
+                                                                     row(row), col(col) {}
 
 };
 

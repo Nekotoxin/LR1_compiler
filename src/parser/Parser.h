@@ -15,7 +15,6 @@
 #include "AST.h"
 
 
-
 class Parser {
 private:
 public:
@@ -25,13 +24,16 @@ public:
     ParsingTable *parsingTable;
 
     Parser(std::string grammar_file);
-    Parser(){ parsingTable= nullptr;};
+
+    Parser() { parsingTable = nullptr; };
+
     ~Parser();
 
-    AST Parse(TokenStream &token_stream);
-    void saveParsingTable(const std::string path1,const std::string path2);  //保存action goto 表
-    bool loadParsingTable(const std::string path1,const std::string path2, time_t yacc_file_last_modify_time);  //读取action goto表，0失败，1成功
-    AST tree;
+    void Parse(TokenStream &token_stream, AST &tree);
+
+    void saveParsingTable(const std::string path1, const std::string path2);  //保存action goto 表
+    bool loadParsingTable(const std::string path1, const std::string path2,
+                          time_t yacc_file_last_modify_time);  //读取action goto表，0失败，1成功
 };
 
 

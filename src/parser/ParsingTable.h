@@ -22,9 +22,9 @@ typedef std::map<std::pair<StateNo, std::string>, std::pair<Action, StateNo>> Pa
 class ParsingTable {
 public:
 // 生成式，终结符和非终结符
-     std::vector<Generator> generators;
-     std::set<std::string> terminals;
-     std::set<std::string> non_terminals;
+    std::vector<Generator> generators;
+    std::set<std::string> terminals;
+    std::set<std::string> non_terminals;
 // LR1DFA
     LR1DFA *lr1_dfa;
 // LR(1)分析表
@@ -33,7 +33,8 @@ public:
 public:
     ParsingTable(const std::vector<Generator> &generators, const std::set<std::string> &terminals,
                  const std::set<std::string> &non_terminals);
-    ParsingTable() { lr1_dfa=nullptr;} //default
+
+    ParsingTable() { lr1_dfa = nullptr; } //default
     ~ParsingTable();
 
     void ConstructParsingTable();

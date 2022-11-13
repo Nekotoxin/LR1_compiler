@@ -39,6 +39,7 @@ Lex::Lex(const std::string &regex2token_filepath) {
 
 Lex::~Lex() {
     delete lex_file;
+    lex_file = nullptr;
 //    delete source_file;
 //    delete pre_process;
 }
@@ -82,11 +83,11 @@ TokenStream Lex::lexing(const std::string &source_filepath) {
                 }
             }
             if (mismatch) {
-                std::cerr << "mismatch word: " << word << " , row:"<<row_no<<" col:"<<col_no<< std::endl;
-                for(auto &regex_token:regex2token){
+                std::cerr << "mismatch word: " << word << " , row:" << row_no << " col:" << col_no << std::endl;
+                for (auto &regex_token: regex2token) {
                     std::regex reg(regex_token.first);
-                    if(std::regex_search(word,reg)){
-                        std::cerr<<"expected:"<<regex_token.second<<std::endl;
+                    if (std::regex_search(word, reg)) {
+                        std::cerr << "expected:" << regex_token.second << std::endl;
                         return token_stream;
                     }
                 }
@@ -118,13 +119,15 @@ TokenStream Lex::lexing(const std::string &source_filepath) {
                 }
             }
         }
-       // std::cout << std::endl;
+        // std::cout << std::endl;
     }
     //std::cout << std::endl;
     //printSymbolTable();
-   // std::cout << std::endl;
+    // std::cout << std::endl;
     printTokenList(token_stream);
     delete pre_process;
     delete source_file;
+    pre_process = nullptr;
+    source_file = nullptr;
     return token_stream;
 }

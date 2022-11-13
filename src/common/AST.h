@@ -4,23 +4,22 @@
 
 #ifndef COMPILER_TREE_H
 #define COMPILER_TREE_H
+
 #include<string>
 #include"../parser/GrammarPreProcess.h"
 #include<vector>
 #include<fstream>
 #include<json.hpp>
 
-using json=nlohmann::json;
-using ordered_json=nlohmann::ordered_json;
-enum nodeType
-{
+using json = nlohmann::json;
+using ordered_json = nlohmann::ordered_json;
+enum nodeType {
     leafNode,
     rootNode,
 };
 
 
 struct SyntaxTreeNode {
-private:
 public:
     std::string name;
     std::string token_name;
@@ -28,28 +27,33 @@ public:
     nodeType type;
 
     ordered_json to_json();
-
-    ~SyntaxTreeNode(){}
 };
 
 
-static void treeNodeClear(SyntaxTreeNode* node){
-    // TODO: BUG
-//    for(auto &item:node->child)
-//        treeNodeClear(item);
-//    delete node;
+static void treeNodeClear(SyntaxTreeNode *node) {
+    if (node == nullptr) return;
+    for (auto item: node->child)
+        treeNodeClear(item);
+    auto name = node->name;
+    if (node) {
+        delete node;
+        node = nullptr;
+    }
 }
 
 
-class AST
-{
+class AST {
 public:
-    SyntaxTreeNode * root;
-    std::string generate_json_file_and_get_json_str(const std::string path= "");
+    SyntaxTreeNode *root;
+
     ordered_json to_json();
-    ~AST(){ treeNodeClear(root);}
+
+    AST() { root = nullptr; }
+
+    ~AST() { treeNodeClear(root); }
+
 private:
-    ordered_json dfsTraverse(SyntaxTreeNode* curNode);
+    ordered_json dfsTraverse(SyntaxTreeNode *curNode);
 };
 
 
