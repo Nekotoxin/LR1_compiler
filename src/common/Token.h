@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
+#include <json.hpp>
 
 using namespace std;
 
@@ -38,6 +39,8 @@ typedef vector<Token> TokenStream;
 void installToken(TokenStream &token_stream, const Token &tok);
 
 void printTokenList(const TokenStream &token_stream);
+
+nlohmann::ordered_json TokenListToJson(const TokenStream &token_stream);
 
 
 #endif

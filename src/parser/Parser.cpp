@@ -154,10 +154,6 @@ void Parser::Parse(TokenStream &token_stream, AST &tree) {
                 state_stack.push(parsingTable->goto_table[std::make_pair(state, generator.first)].second);
                 break;
             }
-            case go:
-                std::cout << "转进到状态 " << next_state << std::endl;
-                state_stack.push(next_state);
-                break;
             case accept:
                 tree.root = node_stack.top(); //生成语法树
                 std::cout << "✅ Accept" << std::endl;

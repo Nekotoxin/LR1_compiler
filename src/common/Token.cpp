@@ -1,6 +1,7 @@
 #include "Token.h"
 #include <iomanip>
 
+
 TokenStream token_stream;
 
 void installToken(TokenStream &token_stream, const Token &tok) {
@@ -21,4 +22,17 @@ void printTokenList(const TokenStream &token_stream) {
              << setw(10) << item.col
              << endl;
     }
+}
+
+nlohmann::ordered_json TokenListToJson(const TokenStream &token_stream) {
+    nlohmann::ordered_json j;
+    for (auto &item: token_stream) {
+        nlohmann::ordered_json item_json;
+        item_json["name"] = item.name;
+        item_json["token_name"] = item.token_name;
+        item_json["row"] = item.row;
+        item_json["col"] = item.col;
+        j.push_back(item_json);
+    }
+    return j;
 }

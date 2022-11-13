@@ -83,14 +83,15 @@ TokenStream Lex::lexing(const std::string &source_filepath) {
                 }
             }
             if (mismatch) {
-                std::cerr << "mismatch word: " << word << " , row:" << row_no << " col:" << col_no << std::endl;
+                std::cerr << "mismatch word: \"" << word << "\" at row:" << row_no << " col:" << col_no;
                 for (auto &regex_token: regex2token) {
                     std::regex reg(regex_token.first);
                     if (std::regex_search(word, reg)) {
-                        std::cerr << "expected:" << regex_token.second << std::endl;
+                        std::cerr << ", expected:" << regex_token.second << std::endl;
                         return token_stream;
                     }
                 }
+                std::cerr << std::endl;
             } else {
                 // install to token table
                 Token tok;
