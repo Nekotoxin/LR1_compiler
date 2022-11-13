@@ -6,7 +6,7 @@
 #include "../common/Symbol.h"
 #include "../common/Token.h"
 
-Lex::Lex(const std::string &regex2token_filepath, const std::string &source_filepath) {
+Lex::Lex(const std::string &regex2token_filepath) {
     lex_file = new ifstream(regex2token_filepath);
     if (!lex_file->is_open()) {
         std::cerr << "regex2token file open failed" << std::endl;
@@ -34,21 +34,22 @@ Lex::Lex(const std::string &regex2token_filepath, const std::string &source_file
         regex2token.emplace_back(regex, token);
     }
 
+
+}
+
+Lex::~Lex() {
+    delete lex_file;
+//    delete source_file;
+//    delete pre_process;
+}
+
+TokenStream Lex::lexing(const std::string &source_filepath) {
     source_file = new ifstream(source_filepath);
     if (!source_file->is_open()) {
         std::cerr << "source file open failed" << std::endl;
         exit(1);
     }
     pre_process = new PreProcess(source_file);
-}
-
-Lex::~Lex() {
-    delete lex_file;
-    delete source_file;
-    delete pre_process;
-}
-
-TokenStream Lex::lexing() {
     TokenStream token_stream;
     // scope stack
     int scope_count = 0;
@@ -86,10 +87,9 @@ TokenStream Lex::lexing() {
                     std::regex reg(regex_token.first);
                     if(std::regex_search(word,reg)){
                         std::cerr<<"expected:"<<regex_token.second<<std::endl;
-                        break;
+                        return token_stream;
                     }
                 }
-                exit(1);
             } else {
                 // install to token table
                 Token tok;
@@ -124,5 +124,7 @@ TokenStream Lex::lexing() {
     //printSymbolTable();
    // std::cout << std::endl;
     printTokenList(token_stream);
+    delete pre_process;
+    delete source_file;
     return token_stream;
 }

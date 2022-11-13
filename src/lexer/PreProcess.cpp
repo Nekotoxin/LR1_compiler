@@ -82,24 +82,45 @@ PreProcess::PreProcess(ifstream *p) {
 }
 
 bool PreProcess::hasNextLine() {
-    auto preIndex = in->tellg();
-    char buffer[BufferMaxSize];
+//    auto preIndex = in->tellg();
+//    char buffer[BufferMaxSize];
     if (in->eof())
         return false;
-    in->getline(buffer, sizeof(buffer));
-    auto len = strlen(buffer);
-    if (!in->eof() || len != 0) {
-        in->seekg(preIndex);
-        return true;
-    } else {
-        in->seekg(preIndex);
-        return false;
-    }
+    return true;
+//    in->getline(buffer, sizeof(buffer));
+//    auto len = strlen(buffer);
+//    if (!in->eof() || len != 0) {
+//        in->seekg(preIndex);
+//        return true;
+//    } else {
+//        in->seekg(preIndex);
+//        return false;
+//    }
 }
 
 vector<string> PreProcess::getNextLine() {
     char buffer[BufferMaxSize];
-    in->getline(buffer, sizeof(buffer));
+    // get line \r\n
+    char ch;
+    int count=0;
+    while ((ch = in->get()) != EOF) {
+        //save to buffer
+        if (ch == '\r') {
+            ch = in->get();
+            if (ch == '\n') {
+                break;
+            } else {
+                cerr << "encode error" << endl;
+                break;
+            }
+        } else if (ch == '\n') {
+            break;
+        } else {
+            buffer[count++] = ch;
+        }
+    }
+    buffer[count] = '\0';
+//    in->getline(buffer, sizeof(buffer));
     string str_buffer = buffer;
 
     bool is_include = 0;        //???????????????

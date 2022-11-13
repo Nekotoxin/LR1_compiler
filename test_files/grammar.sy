@@ -2,63 +2,63 @@ start_point
     : Program $
     ;
 Program
-    : 类型 IDENTIFIER ( ) 语句块
+    : TYPE IDENTIFIER ( ) Statement_block
     ;
-类型
+TYPE
     : INT
     | FLOAT
     | VOID
     ;
-语句块
-    : { 语句串 }
+Statement_block
+    : { Statement_string }
     ;
-语句串
+Statement_string
     : NULL
-    | 语句串 语句
+    | Statement_string Statement
     ;
-语句
-    : 声明语句
-    | 赋值语句
-    | if语句
-    | while语句
-    | return语句
-    | 语句块
+Statement
+    : Declarative_clause
+    | Assignment_clause
+    | If_clause
+    | While_clause
+    | Return_clause
+    | Statement_block
     ;
-声明语句
-    : 类型 IDENTIFIER ;
-    | 类型 IDENTIFIER = 表达式 ;
+Declarative_clause
+    : TYPE IDENTIFIER ;
+    | TYPE IDENTIFIER = Expression ;
     ;
-赋值语句
-    : IDENTIFIER = 表达式 ;
+Assignment_clause
+    : IDENTIFIER = Expression ;
     ;
-return语句
-    : RETURN 表达式 ;
+Return_clause
+    : RETURN Expression ;
     | RETURN ;
     ;
-while语句
-    : WHILE ( 表达式 ) 语句块
+While_clause
+    : WHILE ( Expression ) Statement_block
     ;
-if语句
-    : IF ( 表达式 ) 语句块
-    | IF ( 表达式 ) 语句块 ELSE 语句块
-    | IF ( 表达式 ) 语句块 ELSE if语句
+If_clause
+    : IF ( Expression ) Statement_block
+    | IF ( Expression ) Statement_block ELSE Statement_block
+    | IF ( Expression ) Statement_block ELSE If_clause
     ;
-表达式
-    : 加法表达式
+Expression
+    : Add_Expression
     ;
-加法表达式
-    : 项
-    | 项 + 加法表达式
-    | 项 - 加法表达式
+Add_Expression
+    : Item
+    | Item + Add_Expression
+    | Item - Add_Expression
     ;
-项
-    : 因子
-    | 因子 * 因子
-    | 因子 / 因子
+Item
+    : Factor
+    | Factor * Factor
+    | Factor / Factor
     ;
-因子
+Factor
     : I_CONSTANT
-    | ( 表达式 )
+    | ( Expression )
     | IDENTIFIER FTYPE
     ;
 FTYPE
@@ -66,13 +66,13 @@ FTYPE
     | call
     ;
 call
-    | ( 实参 )
+    | ( Parameter )
     ;
-实参
+Parameter
     : NULL
-    | 实参列表
+    | Parameter_list
     ;
-实参列表
-    | 表达式
-    | 实参列表 , 表达式
+Parameter_list
+    | Expression
+    | Parameter_list , Expression
     ;

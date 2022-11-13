@@ -45,7 +45,8 @@ class AST
 {
 public:
     SyntaxTreeNode * root;
-    std::string to_json(const std::string path="");
+    std::string generate_json_file_and_get_json_str(const std::string path= "");
+    ordered_json to_json();
     ~AST(){ treeNodeClear(root);}
 private:
     ordered_json dfsTraverse(SyntaxTreeNode* curNode);

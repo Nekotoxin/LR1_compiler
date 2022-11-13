@@ -3547,7 +3547,7 @@ is_detected_exact<T, from_json_function, serializer,
 const BasicJsonType&>::value;
 };
 
-// This trait checks if BasicJsonType::json_serializer<T>::to_json exists
+// This trait checks if BasicJsonType::json_serializer<T>::generate_json_file_and_get_json_str exists
 // Do not evaluate the trait when T is a basic_json type, to avoid template instantiation infinite recursion.
 template<typename BasicJsonType, typename T, typename = void>
 struct has_to_json : std::false_type {};
@@ -5056,7 +5056,7 @@ detail::static_const<detail::from_json_fn>::value;
 
 NLOHMANN_JSON_NAMESPACE_END
 
-// #include <nlohmann/detail/conversions/to_json.hpp>
+// #include <nlohmann/detail/conversions/generate_json_file_and_get_json_str.hpp>
 //     __ _____ _____ _____
 //  __|  |   __|     |   | |  JSON for Modern C++
 // |  |  |__   |  |  | | | |  version 3.11.2
@@ -5567,7 +5567,7 @@ j.assert_invariant();
 };
 
 /////////////
-// to_json //
+// generate_json_file_and_get_json_str //
 /////////////
 
 template<typename BasicJsonType, typename T,
@@ -5741,7 +5741,7 @@ return to_json(j, std::forward<T>(val));
 }  // namespace detail
 
 #ifndef JSON_HAS_CPP_17
-/// namespace to hold default `to_json` function
+/// namespace to hold default `generate_json_file_and_get_json_str` function
 /// to see why this is required:
 /// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4381.html
 namespace // NOLINT(cert-dcl59-cpp,fuchsia-header-anon-namespaces,google-build-namespaces)
@@ -5785,7 +5785,7 @@ return ::nlohmann::from_json(std::forward<BasicJsonType>(j), detail::identity_ta
 }
 
 /// @brief convert any value type to a JSON value
-/// @sa https://json.nlohmann.me/api/adl_serializer/to_json/
+/// @sa https://json.nlohmann.me/api/adl_serializer/generate_json_file_and_get_json_str/
 template<typename BasicJsonType, typename TargetType = ValueType>
 static auto to_json(BasicJsonType& j, TargetType && val) noexcept(
 noexcept(::nlohmann::to_json(j, std::forward<TargetType>(val))))
@@ -5905,7 +5905,7 @@ NLOHMANN_JSON_NAMESPACE_END
 
 // #include <nlohmann/detail/conversions/from_json.hpp>
 
-// #include <nlohmann/detail/conversions/to_json.hpp>
+// #include <nlohmann/detail/conversions/generate_json_file_and_get_json_str.hpp>
 
 // #include <nlohmann/detail/exceptions.hpp>
 

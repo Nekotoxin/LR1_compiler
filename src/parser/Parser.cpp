@@ -7,6 +7,7 @@
 #include <utility>
 #include <algorithm>
 #include <time.h>
+#include <sys/stat.h>
 #include <stack>
 #include <stdexcept>
 
@@ -19,8 +20,14 @@ Parser::Parser(std::string grammar_file) {
     time_t start = clock();
     parsingTable = new ParsingTable(this->generators, this->terminals, this->non_terminals);
     time_t end = clock();
-    saveParsingTable("../parse_table.txt","../parse_table.csv");
+    saveParsingTable("./parse_table.txt","./parse_table.csv");
     std::cout << "Parsing table generated in " << (double) (end - start) / CLOCKS_PER_SEC << "s" << std::endl;
+
+    std::ofstream out("./timestamp.txt",std::ios::out);
+    struct stat result;
+    stat(grammar_file.c_str(), &result);
+    out<<result.st_mtime;
+    out.close();
 }
 
 Parser::~Parser() {
@@ -193,11 +200,21 @@ AST Parser::Parse(TokenStream &token_stream) {
 
 }
 
-bool Parser::loadParsingTable(const std::string path1,const std::string path2) {
+bool Parser::loadParsingTable(const std::string path1,const std::string path2, time_t yacc_file_last_modify_time) {
     if (parsingTable)
         delete parsingTable;
 
-    std::ifstream in(path1.c_str(), std::ios::in);
+    std::ifstream in("./timestamp.txt", std::ios::in);
+    auto old_timestamp = 0;
+    if(in.is_open()) {
+        in >> old_timestamp;
+        in.close();
+    }
+    if (old_timestamp != yacc_file_last_modify_time) {
+        return false;
+    }
+
+    in.open(path1.c_str(), std::ios::in);
     if (!in.is_open())
         return false;
 

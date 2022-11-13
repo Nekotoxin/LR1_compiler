@@ -48,7 +48,6 @@
 #
 
 # integer constants: hex, dec, oct
-# NOTE!!! 按照qutt网站, 整常数不包含0???
 "(0[xX])[a-fA-F0-9]+(((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))?"                       I_CONSTANT
 "[1-9][0-9]*(((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))?"                               I_CONSTANT
 "0[0-7]*(((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))?"                                    I_CONSTANT
@@ -116,6 +115,6 @@
 "//.*"                                  SINGLE_LINE_COMMENT
 #
 
-# 以下是一些次要的东西(目前不太清楚有啥用的)
+#
 "[ \t\v\n\f]+"            WHITE_SPACES
 #"."                        DISCARD_BAD_CHARACTER

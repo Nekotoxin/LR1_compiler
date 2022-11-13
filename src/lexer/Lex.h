@@ -21,12 +21,12 @@ private:
     PreProcess *pre_process;
 
 public:
-    Lex(const std::string &regex2token_file_path, const std::string &source_filepath);
+    Lex(const std::string &regex2token_file_path);
 
     ~Lex();
 
     // from source file to token stream
-    TokenStream lexing();
+    TokenStream lexing(const std::string &source_filepath);
 
 };
 
