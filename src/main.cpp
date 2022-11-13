@@ -50,8 +50,7 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
         f.close();
         return res;
 #else
-        struct stat buffer{};
-        return (stat(name.c_str(), &buffer) == 0);
+        return (access(name.c_str(), F_OK) != -1);
 #endif
     };
 
