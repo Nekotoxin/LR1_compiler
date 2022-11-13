@@ -1,3 +1,7 @@
+void demo(int a,int b, int c){
+    test(a,b,c);
+    return 0;
+}
 int main() {
     int a = 1 + 2 + 3;
     int b = (a + a) / (a * a);

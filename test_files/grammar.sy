@@ -1,8 +1,17 @@
 start_point
-    : Program $
+    : Programs $
+    ;
+Programs
+    : Program Programs
+    | Program
+    ;
+Func_Parameter_list
+    : NULL
+    | Func_Parameter_list , TYPE IDENTIFIER
+    | TYPE IDENTIFIER
     ;
 Program
-    : TYPE IDENTIFIER ( ) Statement_block
+    : TYPE IDENTIFIER ( Func_Parameter_list ) Statement_block
     ;
 TYPE
     : INT
@@ -19,10 +28,14 @@ Statement_string
 Statement
     : Declarative_clause
     | Assignment_clause
+    | Call_Function_clause
     | If_clause
     | While_clause
     | Return_clause
     | Statement_block
+    ;
+Call_Function_clause
+    : IDENTIFIER ( Parameter_list ) ;
     ;
 Declarative_clause
     : TYPE IDENTIFIER ;
