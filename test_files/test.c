@@ -1,21 +1,32 @@
-void demo(int a,int b, int c){
-    test(a,b,c);
-    return 0;
-}
-int main() {
-    int a = 1 + 2 + 3;
-    int b = (a + a) / (a * a);
-    while (a) {
-        a = a - 1;
-    }
-
-    if (a) {
-        a = b;
-    } else if (b) {
-        b = a;
-    } else if (a + b) {
+int a;
+int b;
+int program(int a, int b, int c) {
+    int i;
+    int j;
+    i = 0;
+    if (a > (b + c)) {
+        j = a + (b * c + 1);
     } else {
-        a = a + test(a, b, a * b + c);
+        j = a;
     }
-    return 0;
+    while (j <= 100) {
+        j = j * 2;
+    }
+    return j;
+}
+
+int demo(int a) {
+    a = a + 2;
+    return a * 2;
+}
+
+int main(void) {
+    int a;
+    float b;
+    int c;
+    a = 3;
+    b = 4;
+    c = 2;
+    a = program(a, b, demo(c));
+    return;
 }

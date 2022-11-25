@@ -100,24 +100,6 @@ TokenStream Lex::lexing(const std::string &source_filepath) {
                 tok.row = row_no;
                 tok.col = col_no;
                 installToken(token_stream, tok);
-
-                // install identifier to symbol table
-                if (match_res.second == "IDENTIFIER") {
-                    Symbol sym;
-                    sym.name = match_res.first;
-                    sym.hash = std::hash<std::string>{}(word) + (scope_count == 0);
-                    sym.binding = (scope_count == 0 ? ID_CLASS::GLOBAL : ID_CLASS::LOCAL);
-                    installSymbol(sym);
-//                    std::cout << "<\"" << match_res.first << "\", " << match_res.second + "-HASH-" << sym.hash % 10000
-//                              << ">";
-                } else {
-//                    std::cout << "<\"" << match_res.first << "\", " << match_res.second << "> ";
-                }
-                if (word == "{") {
-                    scope_count++;
-                } else if (word == "}") {
-                    scope_count--;
-                }
             }
         }
         // std::cout << std::endl;

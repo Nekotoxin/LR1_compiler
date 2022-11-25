@@ -6,11 +6,9 @@
 #define COMPILER_SEMANTICANALYZER_H
 
 
-
 class SemanticAnalyzer {
 
 };
-
 
 
 #endif //COMPILER_SEMANTICANALYZER_H

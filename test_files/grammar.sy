@@ -1,91 +1,78 @@
 start_point
-    : Programs $
+    : programs $
     ;
-Programs
-    : Program Programs
-    | Program
+programs
+    : decl_stmt programs
+    | functions
     ;
-Func_Parameter_list
+functions
+    : function functions
+    | function
+    ;
+func_parameter_list
     : NULL
-    | Func_Parameter_list , TYPE IDENTIFIER
-    | TYPE IDENTIFIER
+    | func_parameter_list , type IDENTIFIER
+    | type IDENTIFIER
     ;
-Program
-    : TYPE IDENTIFIER ( Func_Parameter_list ) Statement_block
+function
+    : type IDENTIFIER ( func_parameter_list ) stmt_block
     ;
-TYPE
+type
     : INT
     | FLOAT
     | VOID
     ;
-Statement_block
-    : { Statement_string }
+stmt_block
+    : { stmt_string }
     ;
-Statement_string
+stmt_string
     : NULL
-    | Statement_string Statement
+    | stmt_string stmt
     ;
-Statement
-    : Declarative_clause
-    | Assignment_clause
-    | Call_Function_clause
-    | If_clause
-    | While_clause
-    | Return_clause
-    | Statement_block
+stmt
+    : decl_stmt
+    | assign_stmt
+    | if_stmt
+    | while_stmt
+    | return_stmt
+    | expr ;
     ;
-Call_Function_clause
-    : IDENTIFIER ( Parameter_list ) ;
+decl_stmt
+    : type IDENTIFIER ;
+    | type IDENTIFIER = expr ;
     ;
-Declarative_clause
-    : TYPE IDENTIFIER ;
-    | TYPE IDENTIFIER = Expression ;
+assign_stmt
+    : IDENTIFIER = expr ;
     ;
-Assignment_clause
-    : IDENTIFIER = Expression ;
-    ;
-Return_clause
-    : RETURN Expression ;
+return_stmt
+    : RETURN expr ;
     | RETURN ;
     ;
-While_clause
-    : WHILE ( Expression ) Statement_block
+while_stmt
+    : WHILE ( expr ) stmt_block
     ;
-If_clause
-    : IF ( Expression ) Statement_block
-    | IF ( Expression ) Statement_block ELSE Statement_block
-    | IF ( Expression ) Statement_block ELSE If_clause
+if_stmt
+    : IF ( expr ) stmt_block
+    | IF ( expr ) stmt_block ELSE stmt_block
     ;
-Expression
-    : Add_Expression
+expr
+    : item
+    | item + expr
+    | item - expr
     ;
-Add_Expression
-    : Item
-    | Item + Add_Expression
-    | Item - Add_Expression
+item
+    : factor
+    | factor * factor
+    | factor / factor
     ;
-Item
-    : Factor
-    | Factor * Factor
-    | Factor / Factor
-    ;
-Factor
+factor
     : I_CONSTANT
-    | ( Expression )
-    | IDENTIFIER FTYPE
+    | F_CONSTANT
+    | ( expr )
+    | IDENTIFIER
+    | IDENTIFIER ( parameter_list )
     ;
-FTYPE
-    : NULL
-    | call
-    ;
-call
-    | ( Parameter )
-    ;
-Parameter
-    : NULL
-    | Parameter_list
-    ;
-Parameter_list
-    | Expression
-    | Parameter_list , Expression
+parameter_list
+    : expr
+    | parameter_list , expr
     ;

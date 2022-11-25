@@ -6,11 +6,9 @@
 #define COMPILER_INTERMEDIATECODEGENERATOR_H
 
 
-
 class IntermediateCodeGenerator {
 
 };
-
 
 
 #endif //COMPILER_INTERMEDIATECODEGENERATOR_H
