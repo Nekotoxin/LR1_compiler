@@ -7,7 +7,7 @@
 #include<iostream>
 
 
-ordered_json AST::dfsTraverse(SyntaxTreeNode *curNode) {
+ordered_json AST::dfsTraverse(ASTNode *curNode) {
     if (curNode == nullptr)
         return nullptr;
     ordered_json res = curNode->to_json();
@@ -23,7 +23,7 @@ ordered_json AST::to_json() {
     return dfsTraverse(root);
 }
 
-ordered_json SyntaxTreeNode::to_json() {
+ordered_json ASTNode::to_json() {
     ordered_json res;
     res["name"] = this->name;
     ordered_json attributes;

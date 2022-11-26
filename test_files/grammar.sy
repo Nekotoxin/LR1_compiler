@@ -49,12 +49,19 @@ return_stmt
     | RETURN ;
     ;
 while_stmt
-    : WHILE ( expr ) stmt_block
+    : WHILE ( relate_expr ) stmt_block
     ;
 if_stmt
-    : IF ( expr ) stmt_block
-    | IF ( expr ) stmt_block ELSE stmt_block
+    : IF ( relate_expr ) stmt_block
+    | IF ( relate_expr ) stmt_block ELSE stmt_block
     ;
+relate_expr
+	: expr
+	| relate_expr < expr
+	| relate_expr > expr
+	| relate_expr LE_OP expr
+	| relate_expr GE_OP expr
+	;
 expr
     : item
     | item + expr

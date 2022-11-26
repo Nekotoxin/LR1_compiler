@@ -19,18 +19,18 @@ enum nodeType {
 };
 
 
-struct SyntaxTreeNode {
+class ASTNode {
 public:
     std::string name;
     std::string token_name;
-    std::vector<SyntaxTreeNode *> child;
+    std::vector<ASTNode *> child;
     nodeType type;
 
     ordered_json to_json();
 };
 
 
-static void treeNodeClear(SyntaxTreeNode *node) {
+static void treeNodeClear(ASTNode *node) {
     if (node == nullptr) return;
     for (auto item: node->child)
         treeNodeClear(item);
@@ -44,7 +44,7 @@ static void treeNodeClear(SyntaxTreeNode *node) {
 
 class AST {
 public:
-    SyntaxTreeNode *root;
+    ASTNode *root;
 
     ordered_json to_json();
 
@@ -53,7 +53,7 @@ public:
     ~AST() { treeNodeClear(root); }
 
 private:
-    ordered_json dfsTraverse(SyntaxTreeNode *curNode);
+    ordered_json dfsTraverse(ASTNode *curNode);
 };
 
 

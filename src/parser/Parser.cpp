@@ -48,7 +48,7 @@ void Parser::Parse(TokenStream &token_stream, AST &tree) {
     std::stack<StateNo> state_stack;
     // symbol stack
     std::stack<std::string> symbol_stack;
-    std::stack<SyntaxTreeNode *> node_stack;
+    std::stack<ASTNode *> node_stack;
     // TODO: ADD
 
     auto token_it = token_stream.begin();
@@ -75,7 +75,7 @@ void Parser::Parse(TokenStream &token_stream, AST &tree) {
             symbol_stack.push(NULL_SYMBOL);
             // push next state
             state_stack.push(next_state);
-            SyntaxTreeNode *rootNode = new SyntaxTreeNode;
+            ASTNode *rootNode = new ASTNode;
             rootNode->type = nodeType::rootNode;
             rootNode->name = NULL_SYMBOL;
             node_stack.push((rootNode));
@@ -110,7 +110,7 @@ void Parser::Parse(TokenStream &token_stream, AST &tree) {
                           << std::endl;
                 state_stack.push(next_state);
                 symbol_stack.push(symbol);
-                auto leafNode = new SyntaxTreeNode;
+                auto leafNode = new ASTNode;
                 leafNode->name = token_it->name;
                 leafNode->token_name = symbol;
                 leafNode->type = nodeType::leafNode;
@@ -128,7 +128,7 @@ void Parser::Parse(TokenStream &token_stream, AST &tree) {
                     std::cout << i << " ";
                 }
                 std::cout << "] 来规约" << std::endl;
-                auto rootNode = new SyntaxTreeNode;
+                auto rootNode = new ASTNode;
                 rootNode->type = nodeType::rootNode;
                 rootNode->name = generator.first;
                 rootNode->token_name = "use generator: ";
