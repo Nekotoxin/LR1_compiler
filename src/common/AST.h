@@ -45,15 +45,15 @@ static void treeNodeClear(ASTNode *node) {
 }
 
 
-class SyntaxTree {
+class AST {
 public:
     ASTNode *root;
 
     ordered_json to_json();
 
-    SyntaxTree() { root = nullptr; }
+    AST() { root = nullptr; }
 
-    ~SyntaxTree() { treeNodeClear(root); }
+    ~AST() { treeNodeClear(root); }
 
 private:
     ordered_json dfsTraverse(ASTNode *curNode);

@@ -2,16 +2,16 @@ start_point
     : programs $
     ;
 programs
-    : decl_stmt programs
-    | function programs
+    : programs decl_stmt
+    | programs func_decl
     | NULL
     ;
 func_parameter_list
     : NULL
-    | type IDENTIFIER , func_parameter_list
+    | func_parameter_list , type IDENTIFIER
     | type IDENTIFIER
     ;
-function
+func_decl
     : type IDENTIFIER ( func_parameter_list ) { stmts }
     ;
 type
@@ -29,37 +29,40 @@ stmt
     | if_stmt
     | while_stmt
     | return_stmt
-    | expr ;
+    | expr_stmt
+    ;
+expr_stmt
+    : binop_expr ;
     ;
 decl_stmt
     : type IDENTIFIER ;
-    | type IDENTIFIER = expr ;
+    | type IDENTIFIER = binop_expr ;
     ;
 assign_stmt
-    : IDENTIFIER = expr ;
+    : IDENTIFIER = binop_expr ;
     ;
 return_stmt
-    : RETURN expr ;
+    : RETURN binop_expr ;
     | RETURN ;
     ;
 while_stmt
-    : WHILE ( binary_expr ) { stmts }
+    : WHILE ( binop_expr ) { stmts }
     ;
 if_stmt
-    : IF ( binary_expr ) { stmts }
-    | IF ( binary_expr ) { stmts } ELSE { stmts }
+    : IF ( binop_expr ) { stmts }
+    | IF ( binop_expr ) { stmts } ELSE { stmts }
     ;
-binary_expr
-	: expr
-	| binary_expr < expr
-	| binary_expr > expr
-	| binary_expr LE_OP expr
-	| binary_expr GE_OP expr
+binop_expr
+	: add_expr
+	| binop_expr < add_expr
+	| binop_expr > add_expr
+	| binop_expr LE_OP add_expr
+	| binop_expr GE_OP add_expr
 	;
-expr
+add_expr
     : item
-    | item + expr
-    | item - expr
+    | add_expr + item
+    | add_expr - item
     ;
 item
     : factor
@@ -69,11 +72,11 @@ item
 factor
     : I_CONSTANT
     | F_CONSTANT
-    | ( expr )
+    | ( binop_expr )
     | IDENTIFIER
     | IDENTIFIER ( parameter_list )
     ;
 parameter_list
-    : expr
-    | parameter_list , expr
+    : binop_expr
+    | parameter_list , binop_expr
     ;

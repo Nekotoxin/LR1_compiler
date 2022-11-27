@@ -39,7 +39,7 @@ Parser::~Parser() {
     }
 }
 
-void Parser::Parse(TokenStream &token_stream, SyntaxTree &tree) {
+void Parser::Parse(TokenStream &token_stream, AST &tree) {
     time_t start = clock();
     time_t end;
     // 连续比较，文法还不支持

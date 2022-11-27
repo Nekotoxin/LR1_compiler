@@ -81,7 +81,7 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
 
     // Parse Stage
     Parser parser;
-    SyntaxTree ast_tree;
+    AST ast_tree;
     struct stat result;
     stat(yacc_file.c_str(), &result);
     auto flag = parser.loadParsingTable("./parse_table.txt", "./parse_table.csv", result.st_mtime);
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
     std::string lex_file = "", yacc_file = "", source_file = "";
     get_path(argc, argv, lex_file, yacc_file, source_file);
     auto res = compile(lex_file, yacc_file, source_file);
-    output_to_terminal(res);
+//    output_to_terminal(res);
     output_to_file(res);
     return 0;
 }

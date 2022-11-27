@@ -23,20 +23,25 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 
-#include <SyntaxTree.h>
+#include <AST.h>
 
 using namespace llvm;
 
 class CodeGenerator {
 public:
     IRBuilder<>* builder; // generating code
-    LLVMContext TheContext; // core data structure of LLVM
-    std::unique_ptr<Module> TheModule; // single cpp module
-    std::map<std::string, Value*> NamedValues; // functions, variables, etc.
-    SyntaxTree* ast;
+    LLVMContext the_context; // core data structure of LLVM
+    std::unique_ptr<Module> the_module; // single cpp module
+    std::map<std::string, Value*> named_values; // functions, variables, etc.
+    AST* ast;
 
-    CodeGenerator(SyntaxTree* ast_);
+    std::vector<std::string> errors;
+
+    CodeGenerator(AST* ast_);
     std::string CodeGen();
+    Value * CodeGenHelper(ASTNode* node);
+    Function* CodeGenFunc(ASTNode *node);
+    void logError(const std::string& prompt);
 
 };
 
