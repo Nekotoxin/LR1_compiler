@@ -10,6 +10,9 @@
 #include<vector>
 #include<fstream>
 #include<json.hpp>
+#include <llvm/IR/Value.h>
+#include <llvm/IR/IRBuilder.h>
+using namespace llvm;
 
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
@@ -42,15 +45,15 @@ static void treeNodeClear(ASTNode *node) {
 }
 
 
-class AST {
+class SyntaxTree {
 public:
     ASTNode *root;
 
     ordered_json to_json();
 
-    AST() { root = nullptr; }
+    SyntaxTree() { root = nullptr; }
 
-    ~AST() { treeNodeClear(root); }
+    ~SyntaxTree() { treeNodeClear(root); }
 
 private:
     ordered_json dfsTraverse(ASTNode *curNode);

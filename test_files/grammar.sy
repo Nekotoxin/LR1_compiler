@@ -3,31 +3,25 @@ start_point
     ;
 programs
     : decl_stmt programs
-    | functions
-    ;
-functions
-    : function functions
-    | function
+    | function programs
+    | NULL
     ;
 func_parameter_list
     : NULL
-    | func_parameter_list , type IDENTIFIER
+    | type IDENTIFIER , func_parameter_list
     | type IDENTIFIER
     ;
 function
-    : type IDENTIFIER ( func_parameter_list ) stmt_block
+    : type IDENTIFIER ( func_parameter_list ) { stmts }
     ;
 type
     : INT
     | FLOAT
     | VOID
     ;
-stmt_block
-    : { stmt_string }
-    ;
-stmt_string
+stmts
     : NULL
-    | stmt_string stmt
+    | stmts stmt
     ;
 stmt
     : decl_stmt
@@ -49,18 +43,18 @@ return_stmt
     | RETURN ;
     ;
 while_stmt
-    : WHILE ( relate_expr ) stmt_block
+    : WHILE ( binary_expr ) { stmts }
     ;
 if_stmt
-    : IF ( relate_expr ) stmt_block
-    | IF ( relate_expr ) stmt_block ELSE stmt_block
+    : IF ( binary_expr ) { stmts }
+    | IF ( binary_expr ) { stmts } ELSE { stmts }
     ;
-relate_expr
+binary_expr
 	: expr
-	| relate_expr < expr
-	| relate_expr > expr
-	| relate_expr LE_OP expr
-	| relate_expr GE_OP expr
+	| binary_expr < expr
+	| binary_expr > expr
+	| binary_expr LE_OP expr
+	| binary_expr GE_OP expr
 	;
 expr
     : item

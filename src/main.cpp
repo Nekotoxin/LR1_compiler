@@ -5,6 +5,7 @@
 #include <iostream>
 #include "parser/Parser.h"
 #include "lexer/Lex.h"
+#include "CodeGenerator/CodeGenerator.h"
 #include <sys/stat.h>
 #include <iomanip>
 
@@ -80,7 +81,7 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
 
     // Parse Stage
     Parser parser;
-    AST ast_tree;
+    SyntaxTree ast_tree;
     struct stat result;
     stat(yacc_file.c_str(), &result);
     auto flag = parser.loadParsingTable("./parse_table.txt", "./parse_table.csv", result.st_mtime);
@@ -99,6 +100,10 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
     res["parse_stage"]["ast_tree"] = ast_tree_json;
     str_out.str("");
     undo_redirect();
+
+    CodeGenerator codeGenerator(&ast_tree);
+    codeGenerator.CodeGen();
+
     return res;
 }
 

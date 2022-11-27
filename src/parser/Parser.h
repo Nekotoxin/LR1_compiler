@@ -12,7 +12,7 @@
 #include "GrammarPreProcess.h"
 #include "ParsingTable.h"
 #include "Token.h"
-#include "AST.h"
+#include "SyntaxTree.h"
 
 
 class Parser {
@@ -29,7 +29,7 @@ public:
 
     ~Parser();
 
-    void Parse(TokenStream &token_stream, AST &tree);
+    void Parse(TokenStream &token_stream, SyntaxTree &tree);
 
     void saveParsingTable(const std::string path1, const std::string path2);  //保存action goto 表
     bool loadParsingTable(const std::string path1, const std::string path2,

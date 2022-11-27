@@ -2,12 +2,12 @@
 // Created by Neko Toxin on 2022/10/14.
 //
 
-#include "AST.h"
+#include "SyntaxTree.h"
 #include<sstream>
 #include<iostream>
 
 
-ordered_json AST::dfsTraverse(ASTNode *curNode) {
+ordered_json SyntaxTree::dfsTraverse(ASTNode *curNode) {
     if (curNode == nullptr)
         return nullptr;
     ordered_json res = curNode->to_json();
@@ -19,7 +19,7 @@ ordered_json AST::dfsTraverse(ASTNode *curNode) {
     return res;
 }
 
-ordered_json AST::to_json() {
+ordered_json SyntaxTree::to_json() {
     return dfsTraverse(root);
 }
 
@@ -31,6 +31,10 @@ ordered_json ASTNode::to_json() {
     res["attributes"] = attributes;
     return res;
 }
+
+//Value* NumberExprASTNode::Codegen() {
+//    return ConstantFP::get(TheContext, APFloat(Val));
+//}
 
 
 

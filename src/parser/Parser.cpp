@@ -39,7 +39,7 @@ Parser::~Parser() {
     }
 }
 
-void Parser::Parse(TokenStream &token_stream, AST &tree) {
+void Parser::Parse(TokenStream &token_stream, SyntaxTree &tree) {
     time_t start = clock();
     time_t end;
     // 连续比较，文法还不支持
@@ -356,6 +356,8 @@ void Parser::saveParsingTable(const std::string path1, const std::string path2) 
                     case Action::go:
                         out << "g" << state.second.second;
                         break;
+                    default:
+                        break;
                 }
                 is_exist = 1;
                 break;
@@ -380,6 +382,8 @@ void Parser::saveParsingTable(const std::string path1, const std::string path2) 
                             break;
                         case Action::go:
                             out << "g" << state.second.second;
+                            break;
+                        default:
                             break;
                     }
                     is_exist = 1;
@@ -406,6 +410,8 @@ void Parser::saveParsingTable(const std::string path1, const std::string path2) 
                             break;
                         case Action::go:
                             out << "g" << state.second.second;
+                            break;
+                        default:
                             break;
                     }
                     is_exist = 1;
