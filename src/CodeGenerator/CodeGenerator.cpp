@@ -50,7 +50,7 @@ std::string CodeGenerator::CodeGen() {
     for (auto FuncDecl: func_decls) {
         CodeGenFunc(FuncDecl);
     }
-    // output to stream and return
+
     std::string output;
     raw_string_ostream stream(output);
     the_module->print(stream, nullptr);
@@ -98,7 +98,7 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
     auto *func_def = the_module->getFunction(func_name);
     if (func_def && !func_def->empty()) {
         logError("Function redefinition " + func_name);
-        exit(-1);
+        return nullptr;
     }
 
     Function *func = Function::Create(
@@ -109,24 +109,22 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
     );
 
 
-    // set function parameters
-    for (auto &arg: func->args()) {
-        arg.setName(param_names[arg.getArgNo()]);
-        named_values[param_names[arg.getArgNo()]] = &arg;
-    }
-
     verifyFunction(*func);
 
     auto *basic_block = BasicBlock::Create(the_context, "entry", func);
     builder->SetInsertPoint(basic_block);
     Value *ret_val = nullptr;
 
-    // print code
-//    the_module->print(outs(), nullptr);
-    if ((ret_val = CodeGenHelper(stmts))) {
-        builder->CreateRet(ret_val);
-        return func;
+    // set function parameters
+    for (auto &arg: func->args()) {
+        arg.setName(param_names[arg.getArgNo()]);
+        IRBuilder<> tmp_builder(&func->getEntryBlock(), func->getEntryBlock().begin());
+        auto *alloca = tmp_builder.CreateAlloca(Type::getInt32Ty(the_context), nullptr, param_names[arg.getArgNo()]);
+        tmp_builder.CreateStore(&arg, alloca);
+        named_values[param_names[arg.getArgNo()]] = alloca;
     }
+
+    CodeGenHelper(stmts);
 
 //    func->eraseFromParent();
     named_values = named_values_bak;
@@ -160,8 +158,12 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             exit(-1);
         }
         if (builder->GetInsertBlock()) {
-            auto *var = builder->CreateAlloca(Type::getInt32Ty(the_context), nullptr, node->child[1]->name);
+            auto *var = builder->CreateAlloca(Type::getInt32Ty(the_context));
             named_values[node->child[1]->name] = var;
+            if(node->child.size()==5&&node->child[3]->name=="binop_expr"){
+                auto* val = CodeGenHelper(node->child[3]);
+                builder->CreateStore(val, var);
+            }
             return nullptr;
         }
     } else if (node_name == "assign_stmt") {
@@ -193,10 +195,10 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         return nullptr;
     } else if (node_name == "while_stmt") {
         // while_stmt -> WHILE ( binop_expr ) { stmts }
-        auto* cond = CodeGenHelper(node->child[2]);
-        auto* func = builder->GetInsertBlock()->getParent();
-        auto* loop_block = BasicBlock::Create(the_context, "loop", func);
-        auto* merge_block = BasicBlock::Create(the_context, "merge");
+        auto *cond = CodeGenHelper(node->child[2]);
+        auto *func = builder->GetInsertBlock()->getParent();
+        auto *loop_block = BasicBlock::Create(the_context, "loop", func);
+        auto *merge_block = BasicBlock::Create(the_context, "merge");
         builder->CreateCondBr(cond, loop_block, merge_block);
         builder->SetInsertPoint(loop_block);
         CodeGenHelper(node->child[5]);
@@ -209,12 +211,12 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
     } else if (node_name == "return_stmt") {
         // return_stmt -> RETURN expr ;
         // return_stmt -> RETURN ;
-        auto* func = builder->GetInsertBlock()->getParent();
+        auto *func = builder->GetInsertBlock()->getParent();
         if (node->child.size() == 2) {
             builder->CreateRetVoid();
         } else {
             auto *ret_val = CodeGenHelper(node->child[1]);
-            builder->CreateRet(ret_val);
+            return builder->CreateRet(ret_val);
         }
     } else if (node_name == "expr_stmt") {
         CodeGenHelper(node->child[0]);
@@ -230,12 +232,6 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             auto *lhs = CodeGenHelper(node->child[0]);
             auto *rhs = CodeGenHelper(node->child[2]);
             auto op = node->child[1]->token_name;
-//            if (lhs->getType()->isPointerTy()) {
-//                lhs = builder->CreateLoad(llvm::Type::getInt32Ty(the_context), lhs);
-//            }
-//            if (rhs->getType()->isPointerTy()) {
-//                rhs = builder->CreateLoad(llvm::Type::getInt32Ty(the_context), rhs);
-//            }
             // < > GE_OP LE_OP
             if (op == "<") {
                 return builder->CreateICmpSLT(lhs, rhs);
@@ -280,9 +276,8 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
     } else if (node_name == "factor") {
         // factor -> IDENTIFIER || factor -> INT_CONST || factor -> FLOAT_CONST
         if (node->child.size() == 1) {
-            if(node->child[0]->token_name == "IDENTIFIER") {
-                auto* var  = CodeGenHelper(node->child[0]);
-                return builder->CreateLoad(llvm::Type::getInt32Ty(the_context), var);
+            if (node->child[0]->token_name == "IDENTIFIER") {
+                return builder->CreateLoad(llvm::Type::getInt32Ty(the_context), CodeGenHelper(node->child[0]));
             }
             return CodeGenHelper(node->child[0]);
         }
@@ -333,6 +328,10 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         return ConstantFP::get(the_context, APFloat(std::stof(node->name)));
     } else if (node_name == "IDENTIFIER") {
         auto *var = named_values[node->name];
+        if (!var) {
+            logError("Variable not found " + node->name);
+            exit(-1);
+        }
 //        if (!var) {
 //            Value *g_var = the_module->getGlobalVariable(GetNodeName(node));
 //            if (!g_var) {
