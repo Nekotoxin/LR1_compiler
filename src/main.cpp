@@ -102,11 +102,14 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
     undo_redirect();
 
     CodeGenerator codeGenerator(&ast_tree);
-    res["code_gen_stage"]["code"] = codeGenerator.CodeGen();
+    auto ir  = codeGenerator.CodeGen();
+//    res["code_gen_stage"]["code"] = codeGenerator.CodeGen();
+//    auto ir = res["code_gen_stage"]["code"];
+    std::cout<<ir<<std::endl;
 
-//    ofstream out("code.ll");
-//    out << ir;
-//    out.close();
+    ofstream out("code.ll");
+    out << ir;
+    out.close();
 
     return res;
 }

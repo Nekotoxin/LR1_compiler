@@ -70,6 +70,10 @@ item
     | factor / factor
     ;
 factor
+    : unary_expr
+    | - unary_expr
+    ;
+unary_expr
     : I_CONSTANT
     | F_CONSTANT
     | ( binop_expr )

@@ -1,20 +1,15 @@
-//int a;
-//int b;
-
 int program(int a, int b, int c) {
-    int j = a+b;
-    if (a > 100) {
-        j = a * 2;
+    // a = 3, b = 4, c = 8
+    int i;
+    int j;
+    i = 0;
+    if (a > (b + c)) {
+        j = a + (b * c + 1);
     } else {
         j = a;
     }
-
-    if(a> 200) {
-        j = a * 3;
-    }
-
-    while (j < 1000000) {
-        j = j + 1000;
+    while (j <= 100) {
+        j = j * 2;
     }
     return j;
 }

@@ -54,7 +54,7 @@ std::string CodeGenerator::CodeGen() {
     std::string output;
     raw_string_ostream stream(output);
     the_module->print(stream, nullptr);
-    the_module->print(outs(), nullptr);
+//    the_module->print(outs(), nullptr);
     return stream.str();
 }
 
@@ -173,17 +173,14 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         builder->CreateStore(val, var);
         return nullptr;
     } else if (node_name == "if_stmt") {
-
-
+        //"/Users/nekotoxin/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/222.4167.35/CLion.app/Contents/bin/cmake/mac/bin/cmake" --build /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug --target tcc -j 6 &&  /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug/tcc -l ../test_files/regex2token.sl -y ../test_files/grammar.sy -s ../test_files/test.c && llc code.ll -filetype=obj -o test.o && gcc main.cpp test.o -o test && ./test
         if(node->child.size()==7) {
-            // if_stmt -> IF ( binop_expr ) { stmts }
-            // no else block
+            // if_stmt -> IF ( expr ) { stmts }
             auto *cond = CodeGenHelper(node->child[2]);
             auto *then_block = BasicBlock::Create(the_context, "then", builder->GetInsertBlock()->getParent());
             auto *else_block = BasicBlock::Create(the_context, "else");
             auto *merge_block = BasicBlock::Create(the_context, "merge");
-
-            builder->CreateCondBr(cond, then_block, merge_block);
+            builder->CreateCondBr(cond, then_block, else_block);
             builder->SetInsertPoint(then_block);
             CodeGenHelper(node->child[5]);
             builder->CreateBr(merge_block);
@@ -195,36 +192,27 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(merge_block);
             builder->SetInsertPoint(merge_block);
             return nullptr;
-        } else if(node->child.size()==11) {
+
+        } else if(node->child.size()==11){
             // if_stmt -> IF ( expr ) { stmts } ELSE { stmts }
             auto *cond = CodeGenHelper(node->child[2]);
             auto *then_block = BasicBlock::Create(the_context, "then", builder->GetInsertBlock()->getParent());
-            auto *else_block = BasicBlock::Create(the_context, "else", builder->GetInsertBlock()->getParent());
+            auto *else_block = BasicBlock::Create(the_context, "else");
+            auto *merge_block = BasicBlock::Create(the_context, "merge");
             builder->CreateCondBr(cond, then_block, else_block);
             builder->SetInsertPoint(then_block);
+            CodeGenHelper(node->child[5]);
+            builder->CreateBr(merge_block);
+            then_block = builder->GetInsertBlock();
+            builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(else_block);
+            builder->SetInsertPoint(else_block);
+            CodeGenHelper(node->child[9]);
+            builder->CreateBr(merge_block);
+            else_block = builder->GetInsertBlock();
+            builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(merge_block);
+            builder->SetInsertPoint(merge_block);
+            return nullptr;
         }
-
-
-
-
-//        auto *cond = CodeGenHelper(node->child[2]);
-//        auto *func = builder->GetInsertBlock()->getParent();
-//        auto *then_block = BasicBlock::Create(the_context, "then", func);
-//        auto *else_block = BasicBlock::Create(the_context, "else");
-//        auto *merge_block = BasicBlock::Create(the_context, "merge");
-//
-//        builder->CreateCondBr(cond, then_block, else_block);
-//        builder->SetInsertPoint(then_block);
-//        CodeGenHelper(node->child[5]);
-//        builder->CreateBr(merge_block);
-//        then_block = builder->GetInsertBlock();
-//        func->getBasicBlockList().push_back(else_block);
-//        builder->SetInsertPoint(else_block);
-//        CodeGenHelper(node->child[9]);
-//        builder->CreateBr(merge_block);
-//        else_block = builder->GetInsertBlock();
-//        func->getBasicBlockList().push_back(merge_block);
-//        builder->SetInsertPoint(merge_block);
         return nullptr;
     } else if (node_name == "while_stmt") {
         // while_stmt -> WHILE ( binop_expr ) { stmts }
@@ -295,7 +283,8 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         if (node->child.size() == 1 && node->child[0]->name == "factor") {
             // item -> factor
             return CodeGenHelper(node->child[0]);
-        } else if (node->child.size() == 3) {
+        }
+        else if (node->child.size() == 3) {
             // item -> item * factor
             auto op = node->child[1]->token_name;
             auto *lhs = CodeGenHelper(node->child[0]);
@@ -307,6 +296,14 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             }
         }
     } else if (node_name == "factor") {
+        if(node->child.size()==2){
+            // factor -> - unary_expr
+            auto *rhs = CodeGenHelper(node->child[1]);
+            return builder->CreateNeg(rhs, "neg_tmp");
+        }
+        return CodeGenHelper(node->child[0]);
+    }
+    else if (node_name == "unary_expr") {
         // factor -> IDENTIFIER || factor -> INT_CONST || factor -> FLOAT_CONST
         if (node->child.size() == 1) {
             if (node->child[0]->token_name == "IDENTIFIER") {
