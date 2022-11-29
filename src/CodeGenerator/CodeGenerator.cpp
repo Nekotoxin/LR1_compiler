@@ -173,25 +173,58 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         builder->CreateStore(val, var);
         return nullptr;
     } else if (node_name == "if_stmt") {
-        // if_stmt -> IF ( expr ) { stmts } ELSE { stmts }
-        auto *cond = CodeGenHelper(node->child[2]);
-        auto *func = builder->GetInsertBlock()->getParent();
-        auto *then_block = BasicBlock::Create(the_context, "then", func);
-        auto *else_block = BasicBlock::Create(the_context, "else");
-        auto *merge_block = BasicBlock::Create(the_context, "merge");
 
-        builder->CreateCondBr(cond, then_block, else_block);
-        builder->SetInsertPoint(then_block);
-        CodeGenHelper(node->child[5]);
-        builder->CreateBr(merge_block);
-        then_block = builder->GetInsertBlock();
-        func->getBasicBlockList().push_back(else_block);
-        builder->SetInsertPoint(else_block);
-        CodeGenHelper(node->child[9]);
-        builder->CreateBr(merge_block);
-        else_block = builder->GetInsertBlock();
-        func->getBasicBlockList().push_back(merge_block);
-        builder->SetInsertPoint(merge_block);
+
+        if(node->child.size()==7) {
+            // if_stmt -> IF ( binop_expr ) { stmts }
+            // no else block
+            auto *cond = CodeGenHelper(node->child[2]);
+            auto *then_block = BasicBlock::Create(the_context, "then", builder->GetInsertBlock()->getParent());
+            auto *else_block = BasicBlock::Create(the_context, "else");
+            auto *merge_block = BasicBlock::Create(the_context, "merge");
+
+            builder->CreateCondBr(cond, then_block, merge_block);
+            builder->SetInsertPoint(then_block);
+            CodeGenHelper(node->child[5]);
+            builder->CreateBr(merge_block);
+            then_block = builder->GetInsertBlock();
+            builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(else_block);
+            builder->SetInsertPoint(else_block);
+            builder->CreateBr(merge_block);
+            else_block = builder->GetInsertBlock();
+            builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(merge_block);
+            builder->SetInsertPoint(merge_block);
+            return nullptr;
+        } else if(node->child.size()==11) {
+            // if_stmt -> IF ( expr ) { stmts } ELSE { stmts }
+            auto *cond = CodeGenHelper(node->child[2]);
+            auto *then_block = BasicBlock::Create(the_context, "then", builder->GetInsertBlock()->getParent());
+            auto *else_block = BasicBlock::Create(the_context, "else", builder->GetInsertBlock()->getParent());
+            builder->CreateCondBr(cond, then_block, else_block);
+            builder->SetInsertPoint(then_block);
+        }
+
+
+
+
+//        auto *cond = CodeGenHelper(node->child[2]);
+//        auto *func = builder->GetInsertBlock()->getParent();
+//        auto *then_block = BasicBlock::Create(the_context, "then", func);
+//        auto *else_block = BasicBlock::Create(the_context, "else");
+//        auto *merge_block = BasicBlock::Create(the_context, "merge");
+//
+//        builder->CreateCondBr(cond, then_block, else_block);
+//        builder->SetInsertPoint(then_block);
+//        CodeGenHelper(node->child[5]);
+//        builder->CreateBr(merge_block);
+//        then_block = builder->GetInsertBlock();
+//        func->getBasicBlockList().push_back(else_block);
+//        builder->SetInsertPoint(else_block);
+//        CodeGenHelper(node->child[9]);
+//        builder->CreateBr(merge_block);
+//        else_block = builder->GetInsertBlock();
+//        func->getBasicBlockList().push_back(merge_block);
+//        builder->SetInsertPoint(merge_block);
         return nullptr;
     } else if (node_name == "while_stmt") {
         // while_stmt -> WHILE ( binop_expr ) { stmts }

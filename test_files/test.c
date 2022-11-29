@@ -9,6 +9,10 @@ int program(int a, int b, int c) {
         j = a;
     }
 
+    if(a> 200) {
+        j = a * 3;
+    }
+
     while (j < 1000000) {
         j = j + 1000;
     }
