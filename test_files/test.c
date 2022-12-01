@@ -4,9 +4,9 @@ int program(int a, int b, int c) {
     int j;
     i = 0;
     if (a > (b + c)) {
-        j = a + (b * c + 1);
+        return 9999;
     } else {
-        j = a;
+        return 8888;
     }
     while (j <= 100) {
         j = j * 2;
@@ -16,5 +16,5 @@ int program(int a, int b, int c) {
 
 int demo(int a) {
     a = a + 2;
-    return a * 2;
+    return 7777;
 }

@@ -41,6 +41,7 @@ public:
     std::string CodeGen();
     Value * CodeGenHelper(ASTNode* node);
     Function* CodeGenFunc(ASTNode *node);
+    AllocaInst* CreateBlockAlloca(Function* func, const std::string& name) ;
     void logError(const std::string& prompt);
 
 };

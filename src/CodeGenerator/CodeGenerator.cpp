@@ -58,6 +58,13 @@ std::string CodeGenerator::CodeGen() {
     return stream.str();
 }
 
+AllocaInst* CodeGenerator::CreateBlockAlloca(Function* func, const std::string& arg_name) {
+    IRBuilder<> tmp_builder(&func->getEntryBlock(), func->getEntryBlock().begin());
+    auto *alloca = tmp_builder.CreateAlloca(Type::getInt32Ty(the_context), nullptr, arg_name);
+    return alloca;
+
+}
+
 Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
     auto named_values_bak = named_values;
 
@@ -109,7 +116,8 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
     );
 
 
-    verifyFunction(*func);
+
+
 
     auto *basic_block = BasicBlock::Create(the_context, "entry", func);
     builder->SetInsertPoint(basic_block);
@@ -125,6 +133,12 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
     }
 
     CodeGenHelper(stmts);
+
+    auto ret_code = verifyFunction(*func,&errs());
+    if (ret_code) {
+        func->print(errs());
+        exit(-1);
+    }
 
 //    func->eraseFromParent();
     named_values = named_values_bak;
@@ -147,7 +161,10 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         }
         std::reverse(stmts.begin(), stmts.end());
         for (auto stmt: stmts) {
-            CodeGenHelper(stmt->child[0]);
+            auto* ret = CodeGenHelper(stmt->child[0]);
+            if(ret){
+                return ret;
+            }
         }
         return nullptr;
     }
@@ -178,21 +195,16 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             // if_stmt -> IF ( expr ) { stmts }
             auto *cond = CodeGenHelper(node->child[2]);
             auto *then_block = BasicBlock::Create(the_context, "then", builder->GetInsertBlock()->getParent());
-            auto *else_block = BasicBlock::Create(the_context, "else");
             auto *merge_block = BasicBlock::Create(the_context, "merge");
-            builder->CreateCondBr(cond, then_block, else_block);
+            builder->CreateCondBr(cond, then_block, merge_block);
             builder->SetInsertPoint(then_block);
-            CodeGenHelper(node->child[5]);
-            builder->CreateBr(merge_block);
-            then_block = builder->GetInsertBlock();
-            builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(else_block);
-            builder->SetInsertPoint(else_block);
-            builder->CreateBr(merge_block);
-            else_block = builder->GetInsertBlock();
+            auto ret = CodeGenHelper(node->child[5]);
+            if(!ret){
+                builder->CreateBr(merge_block);
+            }
             builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(merge_block);
             builder->SetInsertPoint(merge_block);
             return nullptr;
-
         } else if(node->child.size()==11){
             // if_stmt -> IF ( expr ) { stmts } ELSE { stmts }
             auto *cond = CodeGenHelper(node->child[2]);
@@ -201,14 +213,16 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             auto *merge_block = BasicBlock::Create(the_context, "merge");
             builder->CreateCondBr(cond, then_block, else_block);
             builder->SetInsertPoint(then_block);
-            CodeGenHelper(node->child[5]);
-            builder->CreateBr(merge_block);
-            then_block = builder->GetInsertBlock();
+            auto ret = CodeGenHelper(node->child[5]);
+            if(!ret){
+                builder->CreateBr(merge_block);
+            }
             builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(else_block);
             builder->SetInsertPoint(else_block);
-            CodeGenHelper(node->child[9]);
-            builder->CreateBr(merge_block);
-            else_block = builder->GetInsertBlock();
+            ret = CodeGenHelper(node->child[9]);
+            if(!ret){
+                builder->CreateBr(merge_block);
+            }
             builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(merge_block);
             builder->SetInsertPoint(merge_block);
             return nullptr;
@@ -222,22 +236,22 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         auto *merge_block = BasicBlock::Create(the_context, "merge");
         builder->CreateCondBr(cond, loop_block, merge_block);
         builder->SetInsertPoint(loop_block);
-        CodeGenHelper(node->child[5]);
-        cond = CodeGenHelper(node->child[2]);
-        builder->CreateCondBr(cond, loop_block, merge_block);
-        loop_block = builder->GetInsertBlock();
+        auto ret = CodeGenHelper(node->child[5]);
+        if(!ret){
+            cond = CodeGenHelper(node->child[2]);
+            builder->CreateCondBr(cond, loop_block, merge_block);
+        }
         func->getBasicBlockList().push_back(merge_block);
         builder->SetInsertPoint(merge_block);
         return nullptr;
     } else if (node_name == "return_stmt") {
         // return_stmt -> RETURN expr ;
         // return_stmt -> RETURN ;
-        auto *func = builder->GetInsertBlock()->getParent();
+        auto* func = builder->GetInsertBlock()->getParent();
         if (node->child.size() == 2) {
-            builder->CreateRetVoid();
+            return builder->CreateRetVoid();
         } else {
-            auto *ret_val = CodeGenHelper(node->child[1]);
-            return builder->CreateRet(ret_val);
+            return builder->CreateRet(CodeGenHelper(node->child[1]));
         }
     } else if (node_name == "expr_stmt") {
         CodeGenHelper(node->child[0]);
