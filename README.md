@@ -11,6 +11,10 @@ cmake ..
 make
 ./tcc -l ../test_files/regex2token.sl -y ../test_files/grammar.sy -s ../test_files/test.c
 ```
+运行中间代码流程：
+先使用tcc生成中间代码， 保存到code.ll
+再用llvm套件中的llc将code.ll编译成.o文件
+再用gcc将main.cpp编译， 和.o文件链接， 生成可执行文件
 
 一键运行的示例：
 
