@@ -29,6 +29,19 @@ int demo(int a) {
     return a * 2;
 }
 
+/**
+ * Error Output:
+ *
+------------- Error --------------
+Error: line 33 col 2: variable ttt not defined
+Error: line 37 col 1: function func not defined
+Error: line 43 col 2: variable a already defined
+Error: line 51 col 2: redefinition of 'redefined_func_test'
+Error: line 56: function program call args num not match
+Error: line 60: function program call args type not match
+----------------------------------
+ * /
+
 //int undefined_var_test() {
 //    return ttt;
 //}
