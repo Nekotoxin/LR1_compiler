@@ -1,5 +1,6 @@
 int a;
 int b;
+
 int program(int a, int b, int c) {
     int i;
     int j;
@@ -16,13 +17,16 @@ int program(int a, int b, int c) {
 }
 
 int demo(int a) {
-    if(a==0){
-        return 9999;
-    } else{
-        a = a + 2;
-        return a * 2;
+    b = 9999;
+    int c = 1;
+    if (a == 0) {
+        int k = -1;
+        return b * c * k;
+    } else {
+        int k = -1;
+        a = (a + 2) * k * k;
     }
-    return 0;
+    return a * 2;
 }
 
 //void main() {

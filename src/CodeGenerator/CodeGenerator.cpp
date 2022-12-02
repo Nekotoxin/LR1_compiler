@@ -116,13 +116,8 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
             the_module.get()
     );
 
-
-
-
-
     auto *basic_block = BasicBlock::Create(the_context, "entry", func);
     builder->SetInsertPoint(basic_block);
-    Value *ret_val = nullptr;
 
     // set function parameters
     for (auto &arg: func->args()) {
@@ -131,7 +126,6 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
         auto *alloca = tmp_builder.CreateAlloca(Type::getInt32Ty(the_context), nullptr, param_names[arg.getArgNo()]);
         tmp_builder.CreateStore(&arg, alloca);
         symbol_table.addSymbol(arg.getName().str(), alloca);
-//        named_values[param_names[arg.getArgNo()]] = alloca;
     }
 
     CodeGenHelper(stmts);
@@ -142,7 +136,6 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
         exit(-1);
     }
 
-//    func->eraseFromParent();
     symbol_table.endScope();
     return nullptr;
 }
@@ -204,7 +197,9 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             auto *merge_block = BasicBlock::Create(the_context, "merge");
             builder->CreateCondBr(cond, then_block, merge_block);
             builder->SetInsertPoint(then_block);
+            symbol_table.beginScope();
             auto ret = CodeGenHelper(node->child[5]);
+            symbol_table.endScope();
             if(!ret){
                 builder->CreateBr(merge_block);
             }
@@ -219,13 +214,17 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
             auto *merge_block = BasicBlock::Create(the_context, "merge");
             builder->CreateCondBr(cond, then_block, else_block);
             builder->SetInsertPoint(then_block);
+            symbol_table.beginScope();
             auto ret = CodeGenHelper(node->child[5]);
+            symbol_table.endScope();
             if(!ret){
                 builder->CreateBr(merge_block);
             }
             builder->GetInsertBlock()->getParent()->getBasicBlockList().push_back(else_block);
             builder->SetInsertPoint(else_block);
+            symbol_table.beginScope();
             ret = CodeGenHelper(node->child[9]);
+            symbol_table.endScope();
             if(!ret){
                 builder->CreateBr(merge_block);
             }
@@ -242,7 +241,9 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         auto *merge_block = BasicBlock::Create(the_context, "merge");
         builder->CreateCondBr(cond, loop_block, merge_block);
         builder->SetInsertPoint(loop_block);
+        symbol_table.beginScope();
         auto ret = CodeGenHelper(node->child[5]);
+        symbol_table.endScope();
         if(!ret){
             cond = CodeGenHelper(node->child[2]);
             builder->CreateCondBr(cond, loop_block, merge_block);

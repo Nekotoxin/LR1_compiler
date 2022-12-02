@@ -28,22 +28,22 @@
 
 using namespace llvm;
 
-// myerror inherits from llvm error class
-class MyError : public llvm::ErrorInfo<MyError> {
-public:
-    static char ID;
-    std::string msg;
-
-    MyError(std::string msg) : msg(std::move(msg)) {}
-
-    void log(raw_ostream &OS) const override {
-        OS << msg;
-    }
-
-    std::error_code convertToErrorCode() const override {
-        return llvm::inconvertibleErrorCode();
-    }
-};
+/*
+ * 主要的错误类型
+ * 1. 词法错误
+ * 2. 语法错误
+ * 3. 语义错误, 大概有这几种：
+ *    3.1 未定义的变量
+ *    3.2 未定义的函数
+ *    3.3 重复定义的变量
+ *    3.4 重复定义的函数
+ *    3.5 重复定义的参数
+ *    3.6 参数个数不匹配
+ *    3.7 参数类型不匹配
+ *    3.8 函数返回值类型不匹配
+ *    3.10 未定义的类型
+ *    3.11 未定义的运算符
+ * */
 
 class SymbolTable {
 public:

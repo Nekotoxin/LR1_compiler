@@ -67,8 +67,8 @@ add_expr
     ;
 item
     : factor
-    | factor * factor
-    | factor / factor
+    | item * factor
+    | item / factor
     ;
 factor
     : unary_expr
