@@ -12,6 +12,113 @@ make
 ./tcc -l ../test_files/regex2token.sl -y ../test_files/grammar.sy -s ../test_files/test.c
 ```
 
+一键运行的示例：
+
+输出样例：
+```asm
+我的编译配置："/Users/nekotoxin/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/222.4167.35/CLion.app/Contents/bin/cmake/mac/bin/cmake" --build /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug --target tcc -j 6 &&  /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug/tcc -l ../test_files/regex2token.sl -y ../test_files/grammar.sy -s ../test_files/test.c && llc code.ll -filetype=obj -o test.o && gcc main.cpp test.o -o test && ./test
+输出：
+
+@a = common global i32 0
+@b = common global i32 0
+
+define i32 @program(i32 %a, i32 %b, i32 %c) {
+entry:
+  %c3 = alloca i32, align 4
+  store i32 %c, ptr %c3, align 4
+  %b2 = alloca i32, align 4
+  store i32 %b, ptr %b2, align 4
+  %a1 = alloca i32, align 4
+  store i32 %a, ptr %a1, align 4
+  %i = alloca i32, align 4
+  %j = alloca i32, align 4
+  store i32 0, ptr %i, align 4
+  %0 = load i32, ptr %a1, align 4
+  %1 = load i32, ptr %b2, align 4
+  %2 = load i32, ptr %c3, align 4
+  %addtmp = add i32 %1, %2
+  %3 = icmp sgt i32 %0, %addtmp
+  br i1 %3, label %then, label %else
+
+then:                                             ; preds = %entry
+  %4 = load i32, ptr %a1, align 4
+  %5 = load i32, ptr %b2, align 4
+  %6 = load i32, ptr %c3, align 4
+  %mul_tmp = mul i32 %5, %6
+  %addtmp4 = add i32 %mul_tmp, 1
+  %addtmp5 = add i32 %4, %addtmp4
+  store i32 %addtmp5, ptr %j, align 4
+  br label %merge
+
+else:                                             ; preds = %entry
+  %7 = load i32, ptr %a1, align 4
+  store i32 %7, ptr %j, align 4
+  br label %merge
+
+merge:                                            ; preds = %else, %then
+  %8 = load i32, ptr %j, align 4
+  %9 = icmp sle i32 %8, 100
+  br i1 %9, label %loop, label %merge7
+
+loop:                                             ; preds = %loop, %merge
+  %10 = load i32, ptr %j, align 4
+  %mul_tmp6 = mul i32 %10, 2
+  store i32 %mul_tmp6, ptr %j, align 4
+  %11 = load i32, ptr %j, align 4
+  %12 = icmp sle i32 %11, 100
+  br i1 %12, label %loop, label %merge7
+
+merge7:                                           ; preds = %loop, %merge
+  %13 = load i32, ptr %j, align 4
+  ret i32 %13
+}
+
+define i32 @demo(i32 %a) {
+entry:
+  %a1 = alloca i32, align 4
+  store i32 %a, ptr %a1, align 4
+  store i32 9999, ptr @b, align 4
+  %c = alloca i32, align 4
+  store i32 1, ptr %c, align 4
+  %0 = load i32, ptr %a1, align 4
+  %1 = icmp eq i32 %0, 0
+  br i1 %1, label %then, label %else
+
+then:                                             ; preds = %entry
+  %k = alloca i32, align 4
+  store i32 -1, ptr %k, align 4
+  %2 = load i32, ptr @b, align 4
+  %3 = load i32, ptr %c, align 4
+  %mul_tmp = mul i32 %2, %3
+  %4 = load i32, ptr %k, align 4
+  %mul_tmp2 = mul i32 %mul_tmp, %4
+  ret i32 %mul_tmp2
+
+else:                                             ; preds = %entry
+  %k3 = alloca i32, align 4
+  store i32 -1, ptr %k3, align 4
+  %5 = load i32, ptr %a1, align 4
+  %addtmp = add i32 %5, 2
+  %6 = load i32, ptr %k3, align 4
+  %mul_tmp4 = mul i32 %addtmp, %6
+  %7 = load i32, ptr %k3, align 4
+  %mul_tmp5 = mul i32 %mul_tmp4, %7
+  store i32 %mul_tmp5, ptr %a1, align 4
+  br label %merge
+
+merge:                                            ; preds = %else
+  %8 = load i32, ptr %a1, align 4
+  %mul_tmp6 = mul i32 %8, 2
+  ret i32 %mul_tmp6
+}
+
+----------compiler & run output---------
+should be -9999, out: -9999
+should be 6, out: 6
+should be 192, out: 192
+```
+
+
 正常输出:
 
 ![Screen Shot 2022-10-21 at 13.30.24](https://user-images.githubusercontent.com/75596353/197121504-f0977be8-aed6-49a6-b273-be5d1e7db001.png)
@@ -69,7 +176,6 @@ https://cyberzhg.github.io/toolbox/lr1, 这是一个开源的文法可视化网�
 
 ![Screen Shot 2022-10-21 at 13.33.15](https://user-images.githubusercontent.com/75596353/197121548-4d0f2f86-052c-48e5-8cd2-d527f532662b.png)
 
-文法需要进一步完善, 我们希望最终能够解析如下源文件:
 
 ```c
 int a;

@@ -114,6 +114,8 @@ void Parser::Parse(TokenStream &token_stream, AST &tree) {
                 leafNode->name = token_it->name;
                 leafNode->token_name = symbol;
                 leafNode->type = nodeType::leafNode;
+                leafNode->col = token_it->col;
+                leafNode->row = token_it->row;
                 node_stack.push((leafNode));    //加入子节点到结点栈
                 token_it++;
                 break;

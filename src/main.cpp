@@ -56,7 +56,7 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
     };
 
 
-//    redirect_to_str();
+    redirect_to_str();
 
     // Init Stage
     if (!file_exist(lex_file)) {
@@ -99,7 +99,7 @@ ordered_json compile(std::string lex_file, std::string yacc_file, std::string so
     res["parse_stage"]["procedure"] = str_out.str();
     res["parse_stage"]["ast_tree"] = ast_tree_json;
     str_out.str("");
-//    undo_redirect();
+    undo_redirect();
 
     CodeGenerator codeGenerator(&ast_tree);
     auto ir  = codeGenerator.CodeGen();

@@ -28,6 +28,8 @@ public:
     std::string token_name;
     std::vector<ASTNode *> child;
     nodeType type;
+    int col = -1;
+    int row = -1;
 
     ordered_json to_json();
 };

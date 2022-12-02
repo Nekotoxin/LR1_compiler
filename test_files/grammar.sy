@@ -82,6 +82,7 @@ unary_expr
     | IDENTIFIER ( parameter_list )
     ;
 parameter_list
-    : binop_expr
+    : NULL
+    | binop_expr
     | parameter_list , binop_expr
     ;

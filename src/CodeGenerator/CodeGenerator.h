@@ -25,6 +25,7 @@
 
 #include <AST.h>
 #include <vector>
+#include <iostream>
 
 using namespace llvm;
 
@@ -40,9 +41,6 @@ using namespace llvm;
  *    3.5 重复定义的参数
  *    3.6 参数个数不匹配
  *    3.7 参数类型不匹配
- *    3.8 函数返回值类型不匹配
- *    3.10 未定义的类型
- *    3.11 未定义的运算符
  * */
 
 class SymbolTable {
@@ -69,7 +67,11 @@ public:
     }
 
     int addSymbol(std::string name, Value* value) {
+        if(isConflict(name)) {
+            return 1;
+        }
         symbol_table_stack.back()[name] = value;
+        return 0;
     }
 
     void beginScope() {
@@ -77,7 +79,22 @@ public:
     }
 
     int endScope() {
+        if(symbol_table_stack.size() == 1) {
+            return 0;
+        }
         symbol_table_stack.pop_back();
+        return 1;
+    }
+
+    int isGlobalVar(const std::string& name) {
+        // only can be found at the top of the stack
+        for (auto it = symbol_table_stack.begin() + 1; it != symbol_table_stack.end(); it++) {
+            auto symbol = it->find(name);
+            if (symbol != it->end()) {
+                return 0;
+            }
+        }
+        return symbol_table_stack.front().find(name) != symbol_table_stack.front().end();
     }
 
 };
@@ -87,7 +104,6 @@ public:
     IRBuilder<>* builder; // generating code
     LLVMContext the_context; // core data structure of LLVM
     std::unique_ptr<Module> the_module; // single cpp module
-//    std::map<std::string, Value*> named_values; // functions, variables, etc.
     SymbolTable symbol_table; // symbol table
     AST* ast;
 
@@ -97,8 +113,10 @@ public:
     std::string CodeGen();
     Value * CodeGenHelper(ASTNode* node);
     Function* CodeGenFunc(ASTNode *node);
-    AllocaInst* CreateBlockAlloca(Function* func, const std::string& name) ;
     void logError(const std::string& prompt);
+    void logError(const int line, const std::string &prompt) ;
+    void logError(const int line, const int col ,const std::string& prompt);
+    Type* getLLVMType(const std::string& type_name);
 
 };
 

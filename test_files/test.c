@@ -29,6 +29,38 @@ int demo(int a) {
     return a * 2;
 }
 
+//int undefined_var_test() {
+//    return ttt;
+//}
+//
+//void undefined_func_test() {
+//    func(1);
+//    return;
+//}
+//
+//void redefined_var_test() {
+//    int a = 1;
+//    int a = 2;
+//    return;
+//}
+//
+//void redefined_func_test() {
+//    return;
+//}
+//
+//void redefined_func_test() {
+//    return;
+//}
+//
+//void arg_not_match_test() {
+//    program(1, 2);
+//}
+//
+//void arg_type_not_match_test() {
+//    program(1.1, 2,3);
+//}
+
+
 //void main() {
 //    int a;
 //    float b;
