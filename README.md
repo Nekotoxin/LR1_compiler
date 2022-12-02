@@ -17,12 +17,10 @@ make
 再用gcc将main.cpp编译， 和.o文件链接， 生成可执行文件
 
 一键运行的示例：
+我的编译配置："/Users/nekotoxin/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/222.4167.35/CLion.app/Contents/bin/cmake/mac/bin/cmake" --build /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug --target tcc -j 6 &&  /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug/tcc -l ../test_files/regex2token.sl -y ../test_files/grammar.sy -s ../test_files/test.c && llc code.ll -filetype=obj -o test.o && gcc main.cpp test.o -o test && ./test
 
 输出样例：
 ```asm
-我的编译配置："/Users/nekotoxin/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/222.4167.35/CLion.app/Contents/bin/cmake/mac/bin/cmake" --build /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug --target tcc -j 6 &&  /Users/nekotoxin/workspace/gitclone/LR1_compiler/cmake-build-debug/tcc -l ../test_files/regex2token.sl -y ../test_files/grammar.sy -s ../test_files/test.c && llc code.ll -filetype=obj -o test.o && gcc main.cpp test.o -o test && ./test
-输出：
-
 @a = common global i32 0
 @b = common global i32 0
 
