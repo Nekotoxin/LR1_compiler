@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stack>
 #include <utility>
-#include "../common/Symbol.h"
 #include "../common/Token.h"
 
 Lex::Lex(const std::string &regex2token_filepath) {

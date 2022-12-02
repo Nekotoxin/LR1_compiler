@@ -41,9 +41,10 @@ std::string CodeGenerator::CodeGen() {
                 false,
                 GlobalValue::CommonLinkage,
                 con_0,
-                DeclStmt->child[0]->child[0]->token_name
+                DeclStmt->child[1]->name
         );
-        gvar->setName(DeclStmt->child[1]->name);
+//        named_values[DeclStmt->child[1]->name] = gvar;
+        symbol_table.addSymbol(DeclStmt->child[1]->name, gvar);
     }
 
     // generate all functions
@@ -66,7 +67,7 @@ AllocaInst* CodeGenerator::CreateBlockAlloca(Function* func, const std::string& 
 }
 
 Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
-    auto named_values_bak = named_values;
+    symbol_table.beginScope();
 
     // func_decl -> type IDENTIFIER ( func_parameter_list ) { stmts }
     auto ret_type = node->child[0]->child[0]->token_name;
@@ -129,7 +130,8 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
         IRBuilder<> tmp_builder(&func->getEntryBlock(), func->getEntryBlock().begin());
         auto *alloca = tmp_builder.CreateAlloca(Type::getInt32Ty(the_context), nullptr, param_names[arg.getArgNo()]);
         tmp_builder.CreateStore(&arg, alloca);
-        named_values[param_names[arg.getArgNo()]] = alloca;
+        symbol_table.addSymbol(arg.getName().str(), alloca);
+//        named_values[param_names[arg.getArgNo()]] = alloca;
     }
 
     CodeGenHelper(stmts);
@@ -141,11 +143,13 @@ Function *CodeGenerator::CodeGenFunc(ASTNode *node) {
     }
 
 //    func->eraseFromParent();
-    named_values = named_values_bak;
+    symbol_table.endScope();
     return nullptr;
 }
 
 static std::string GetNodeName(ASTNode *node) {
+//    throw std::runtime_error("GetNodeName not implemented");
+//    std::error
     return node->type == leafNode ? node->token_name : node->name;
 }
 
@@ -170,13 +174,14 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
     }
 
     if (node_name == "decl_stmt") {
-        if (named_values.find(node->child[1]->name) != named_values.end()) {
+        if (symbol_table.isConflict(node->child[1]->name)) {
             logError("Variable redefinition " + node->child[0]->child[0]->token_name);
             exit(-1);
         }
         if (builder->GetInsertBlock()) {
             auto *var = builder->CreateAlloca(Type::getInt32Ty(the_context));
-            named_values[node->child[1]->name] = var;
+            symbol_table.addSymbol(node->child[1]->name, var);
+            //            named_values[node->child[1]->name] = var;
             if(node->child.size()==5&&node->child[3]->name=="binop_expr"){
                 auto* val = CodeGenHelper(node->child[3]);
                 builder->CreateStore(val, var);
@@ -185,7 +190,8 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
         }
     } else if (node_name == "assign_stmt") {
         // a = 3
-        auto *var = named_values[node->child[0]->name];
+        auto* var = symbol_table.getSymbol(node->child[0]->name);
+//        auto *var = named_values[node->child[0]->name];
         auto *val = CodeGenHelper(node->child[2]);
         builder->CreateStore(val, var);
         return nullptr;
@@ -276,6 +282,8 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
                 return builder->CreateICmpSGE(lhs, rhs);
             } else if (op == "LE_OP") {
                 return builder->CreateICmpSLE(lhs, rhs);
+            } else if(op == "EQ_OP") {
+                return builder->CreateICmpEQ(lhs, rhs);
             }
         }
     } else if (node_name == "add_expr") {
@@ -371,19 +379,7 @@ Value *CodeGenerator::CodeGenHelper(ASTNode *node) {
     } else if (node_name == "F_CONSTANT") {
         return ConstantFP::get(the_context, APFloat(std::stof(node->name)));
     } else if (node_name == "IDENTIFIER") {
-        auto *var = named_values[node->name];
-        if (!var) {
-            logError("Variable not found " + node->name);
-            exit(-1);
-        }
-//        if (!var) {
-//            Value *g_var = the_module->getGlobalVariable(GetNodeName(node));
-//            if (!g_var) {
-//                logError("Variable not found " + node->name);
-//                exit(-1);
-//            }
-//            return g_var;
-//        }
+        auto *var = symbol_table.getSymbol(node->name);
         return var;
     }
 

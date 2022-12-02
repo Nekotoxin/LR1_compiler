@@ -8,7 +8,6 @@
 #include <utility>
 #include <string>
 #include <functional>
-#include "Symbol.h"
 #include "PreProcess.h"
 #include "Token.h"
 

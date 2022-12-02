@@ -58,6 +58,7 @@ binop_expr
 	| binop_expr > add_expr
 	| binop_expr LE_OP add_expr
 	| binop_expr GE_OP add_expr
+	| binop_expr EQ_OP add_expr
 	;
 add_expr
     : item
